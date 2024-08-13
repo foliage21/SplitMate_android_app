@@ -19,7 +19,9 @@
         android:layout_height="50dp"
         android:hint="Username"
         android:textSize="16sp"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="30dp"
+        android:maxLines="1"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/et_register_password"
@@ -28,6 +30,7 @@
         android:hint="Password"
         android:textSize="16sp"
         android:inputType="textPassword"
+        android:maxLines="1"
         android:layout_marginTop="10dp" />
 
     <EditText
@@ -37,6 +40,7 @@
         android:hint="Confirm Password"
         android:textSize="16sp"
         android:inputType="textPassword"
+        android:maxLines="1"
         android:layout_marginTop="10dp" />
 
     <!-- ImageView for displaying selected photo -->
