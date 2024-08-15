@@ -1,4 +1,4 @@
-package com.example.splitmate_delta;
+package com.example.splitmate_delta.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.splitmate_delta.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
         mEtUser = findViewById(R.id.et_1);
         mEtPassword = findViewById(R.id.et_2);
 
-        //
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,10 +43,20 @@ public class LoginActivity extends AppCompatActivity {
         if (username.isEmpty() || password.isEmpty()) {
             Toast.makeText(LoginActivity.this, "The username and password cannot be empty", Toast.LENGTH_SHORT).show();
         } else {
-            // After successful login, jump to the next function page
-            Intent intent = new Intent(LoginActivity.this, FunctionActivity.class);
+            String userRole = getUserRole(username);
+            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+            intent.putExtra("user_role", userRole);
             startActivity(intent);
             finish();
+        }
+    }
+
+    // Mock function to determine user role
+    private String getUserRole(String username) {
+        if (username.equals("landlord")) {
+            return "landlord";
+        } else {
+            return "tenant";
         }
     }
 }

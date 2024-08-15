@@ -1,4 +1,4 @@
-package com.example.splitmate_delta;
+package com.example.splitmate_delta.activity;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,6 +14,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.splitmate_delta.R;
 
 import java.io.IOException;
 

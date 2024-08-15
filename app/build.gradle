@@ -36,14 +36,19 @@ dependencies {
     implementation(libs.constraintlayout)
 
     // Import Firebase BoM (used to manage the version of Firebase dependent libraries)
-    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
 
     // Add a Firebase SDK dependency, such as Google Analytics
     implementation("com.google.firebase:firebase-analytics")
 
-    // Add Firebase Authentication and Cloud Firestore dependencies
+    // Firebase Authentication
     implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
+
+    // Firebase Realtime Database
+    implementation("com.google.firebase:firebase-database")
+
+    // Firebase Storage
+    implementation("com.google.firebase:firebase-storage")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

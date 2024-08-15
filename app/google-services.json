@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "994198424250",
+    "project_id": "splitemate-55cc2",
+    "storage_bucket": "splitemate-55cc2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994198424250:android:755d5ac5f42c1ed0c3d083",
+        "android_client_info": {
+          "package_name": "com.example.firestore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTC8riWQNxrWcjcvE5qduMbC2521PsiHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:994198424250:android:e075558b27a02597c3d083",
+        "android_client_info": {
+          "package_name": "com.example.splitmate_delta"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTC8riWQNxrWcjcvE5qduMbC2521PsiHU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

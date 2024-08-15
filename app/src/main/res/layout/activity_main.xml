@@ -8,17 +8,19 @@
     android:background="@drawable/background1"
     android:gravity="center"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <TextView
         android:id="@+id/tv_1"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SplitMate-System"
-        android:textColor="#BF1206"
-        android:textSize="24sp"
+        android:textColor="#4CAF50"
+        android:textSize="36sp"
         android:textStyle="bold"
         android:gravity="center"
+        android:fontFamily="@font/note1"
+        android:layout_gravity="center"
         android:layout_marginTop="100dp"/>
 
     <Button
