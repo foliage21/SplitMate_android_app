@@ -31,22 +31,22 @@ public class TenantDashboardFragment extends Fragment {
 
         mBtnViewBills.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "View Bills clicked", Toast.LENGTH_SHORT).show();
-            // TODO: Implement view bills functionality
+            // TODO: view bills
         });
 
         mBtnViewPermissions.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "View Permissions clicked", Toast.LENGTH_SHORT).show();
-            // TODO: Implement view permissions functionality
+            // TODO: view permissions
         });
 
         mBtnViewUsage.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "View Usage clicked", Toast.LENGTH_SHORT).show();
-            // TODO: Implement view usage functionality
+            // TODO: view usage
         });
 
         mBtnRequestPermission.setOnClickListener(v -> {
             Toast.makeText(getActivity(), "Request Permission clicked", Toast.LENGTH_SHORT).show();
-            // TODO: Implement request permission functionality
+            // TODO: request permission
         });
 
         return view;
