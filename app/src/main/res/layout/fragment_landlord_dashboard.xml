@@ -8,7 +8,7 @@
     android:background="@drawable/background1">
 
     <Button
-        android:id="@+id/btn_add_tenant"
+        android:id="@+id/AddRemoveTenant"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginBottom="16dp"
@@ -20,7 +20,7 @@
         android:gravity="center" />
 
     <Button
-        android:id="@+id/btn_view_tenant_usage"
+        android:id="@+id/TenantUsageRecords"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_marginBottom="16dp"
@@ -32,19 +32,7 @@
         android:gravity="center" />
 
     <Button
-        android:id="@+id/btn_view_tenant_bills"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@android:color/holo_orange_light"
-        android:text="Tenant Bills"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:padding="16dp"
-        android:gravity="center" />
-
-    <Button
-        android:id="@+id/btn_manage_facility_permissions"
+        android:id="@+id/ManagePermissions"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:backgroundTint="@android:color/holo_red_light"

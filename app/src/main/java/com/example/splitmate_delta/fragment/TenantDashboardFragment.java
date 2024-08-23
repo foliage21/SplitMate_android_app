@@ -14,39 +14,32 @@ import com.example.splitmate_delta.R;
 
 public class TenantDashboardFragment extends Fragment {
 
-    private Button mBtnViewBills;
-    private Button mBtnViewPermissions;
-    private Button mBtnViewUsage;
-    private Button mBtnRequestPermission;
+    private Button mCurrentPermissions;
+    private Button mUsageRecords;
+    private Button mRequestAccessPermissions;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tenant_dashboard, container, false);
 
-        mBtnViewBills = view.findViewById(R.id.btn_view_bills);
-        mBtnViewPermissions = view.findViewById(R.id.btn_view_permissions);
-        mBtnViewUsage = view.findViewById(R.id.btn_view_usage);
-        mBtnRequestPermission = view.findViewById(R.id.btn_request_permission);
+        mCurrentPermissions = view.findViewById(R.id.CurrentPermissions);
+        mUsageRecords = view.findViewById(R.id.UsageRecords);
+        mRequestAccessPermissions = view.findViewById(R.id.RequestAccessPermissions);
 
-        mBtnViewBills.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "View Bills clicked", Toast.LENGTH_SHORT).show();
-            // TODO: view bills
+        mCurrentPermissions.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Current Permissions clicked", Toast.LENGTH_SHORT).show();
+            // TODO: view current permissions
         });
 
-        mBtnViewPermissions.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "View Permissions clicked", Toast.LENGTH_SHORT).show();
-            // TODO: view permissions
+        mUsageRecords.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Usage Records clicked", Toast.LENGTH_SHORT).show();
+            // TODO: view usage records
         });
 
-        mBtnViewUsage.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "View Usage clicked", Toast.LENGTH_SHORT).show();
-            // TODO: view usage
-        });
-
-        mBtnRequestPermission.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "Request Permission clicked", Toast.LENGTH_SHORT).show();
-            // TODO: request permission
+        mRequestAccessPermissions.setOnClickListener(v -> {
+            Toast.makeText(getActivity(), "Request Access Permissions clicked", Toast.LENGTH_SHORT).show();
+            // TODO: request access permissions
         });
 
         return view;
