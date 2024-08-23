@@ -17,7 +17,7 @@
         android:id="@+id/et_1"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Username"
+        android:hint="Email"
         android:textSize="16sp"
         android:layout_marginTop="30dp"
         android:maxLines="1"

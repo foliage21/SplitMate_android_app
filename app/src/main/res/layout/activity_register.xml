@@ -14,12 +14,22 @@
         android:layout_marginTop="50dp" />
 
     <EditText
+        android:id="@+id/et_register_email"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Email"
+        android:textSize="16sp"
+        android:layout_marginTop="30dp"
+        android:maxLines="1"
+        android:inputType="textEmailAddress" />
+
+    <EditText
         android:id="@+id/et_register_user"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:hint="Username"
         android:textSize="16sp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:maxLines="1"
         android:inputType="text" />
 
@@ -43,7 +53,6 @@
         android:maxLines="1"
         android:layout_marginTop="10dp" />
 
-    <!-- ImageView for displaying selected photo -->
     <ImageView
         android:id="@+id/img_profile"
         android:layout_width="150dp"
@@ -54,7 +63,6 @@
         android:contentDescription="Profile Image"
         android:scaleType="centerCrop" />
 
-    <!-- Button to trigger image selection -->
     <Button
         android:id="@+id/btn_upload_photo"
         android:layout_width="match_parent"
