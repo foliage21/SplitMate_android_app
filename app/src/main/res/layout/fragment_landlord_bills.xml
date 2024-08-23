@@ -4,13 +4,93 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@drawable/background1">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Tenant Selection Spinner -->
+    <Spinner
+        android:id="@+id/tenantSpinner"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Landlord Bills"
-        android:textSize="24sp"
-        android:gravity="center" />
+        android:layout_marginBottom="16dp"
+        android:background="@android:drawable/btn_dropdown"
+        android:padding="12dp"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"/>
+
+    <!-- Water Bill Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:elevation="4dp"
+        android:padding="16dp"
+        android:backgroundTint="@android:color/white">
+
+        <TextView
+            android:id="@+id/waterBill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Water Bill: $0.00"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Electricity Bill Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:elevation="4dp"
+        android:padding="16dp"
+        android:backgroundTint="@android:color/white">
+
+        <TextView
+            android:id="@+id/electricityBill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Electricity Bill: $0.00"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Internet Bill Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:elevation="4dp"
+        android:padding="16dp"
+        android:backgroundTint="@android:color/white">
+
+        <TextView
+            android:id="@+id/internetBill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Internet Bill: $0.00"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp"/>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Gas Bill Card -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        android:padding="16dp"
+        android:backgroundTint="@android:color/white">
+
+        <TextView
+            android:id="@+id/gasBill"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gas Bill: $0.00"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="8dp"/>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -70,7 +72,7 @@ public class AccountFragment extends Fragment {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
-                    // Handle possible errors.
+                    Toast.makeText(getContext(), "Failed to load Account data. Please try again.", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -78,7 +80,7 @@ public class AccountFragment extends Fragment {
         // Set logout button click listener
         mBtnLogout.setOnClickListener(v -> {
             mAuth.signOut();
-            getActivity().finish();  // Close current activity
+            getActivity().finish();
         });
 
         return view;
