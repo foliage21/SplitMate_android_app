@@ -12,6 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.splitmate_delta.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -59,25 +64,40 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            String userRole = getUserRole(user.getEmail());
-                            Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
-                            intent.putExtra("user_role", userRole);
-                            startActivity(intent);
-                            finish();
+                            getUserRoleAndProceed(user.getUid());
                         }
                     } else {
-                        Toast.makeText(LoginActivity.this, "login failed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Login failed.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // Mock function to determine user role based on email
-    private String getUserRole(String email) {
-        // Example logic: use email to determine role
-        if (email.equals("landlord@example.com")) {
-            return "landlord";
-        } else {
-            return "tenant";
-        }
+    // Method to retrieve user role from Firebase Realtime Database
+    private void getUserRoleAndProceed(String userId) {
+        DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String userRole = dataSnapshot.child("role").getValue(String.class);
+                    proceedToNavigationActivity(userRole);
+                } else {
+                    Toast.makeText(LoginActivity.this, "User data not found.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(LoginActivity.this, "Database error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void proceedToNavigationActivity(String userRole) {
+        Intent intent = new Intent(LoginActivity.this, NavigationActivity.class);
+        intent.putExtra("user_role", userRole);
+        startActivity(intent);
+        finish();
     }
 }

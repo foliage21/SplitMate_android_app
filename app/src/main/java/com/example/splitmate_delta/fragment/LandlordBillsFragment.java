@@ -58,8 +58,16 @@ public class LandlordBillsFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String tenantId = snapshot.getKey();
                     String username = snapshot.child("username").getValue(String.class);
-                    tenantList.add(username != null ? username : "Unknown User");
-                    tenantIds.add(tenantId);
+                    String role = snapshot.child("role").getValue(String.class);
+
+                    if ("tenant".equals(role)) {
+                        tenantList.add(username != null ? username : "Unknown User");
+                        tenantIds.add(tenantId);
+                    }
+                }
+
+                if (tenantList.isEmpty()) {
+                    tenantList.add("No tenants available");
                 }
 
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
@@ -70,8 +78,10 @@ public class LandlordBillsFragment extends Fragment {
                 tenantSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String selectedTenantId = tenantIds.get(position);
-                        loadTenantBills(selectedTenantId);
+                        if (!tenantIds.isEmpty()) {
+                            String selectedTenantId = tenantIds.get(position);
+                            loadTenantBills(selectedTenantId);
+                        }
                     }
 
                     @Override

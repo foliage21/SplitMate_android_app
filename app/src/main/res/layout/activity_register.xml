@@ -53,6 +53,30 @@
         android:maxLines="1"
         android:layout_marginTop="10dp" />
 
+    <RadioGroup
+        android:id="@+id/rg_role"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
+
+        <RadioButton
+            android:id="@+id/rb_tenant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tenant"
+            android:textSize="16sp"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/rb_landlord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Landlord"
+            android:textSize="16sp"
+            android:layout_marginStart="20dp" />
+    </RadioGroup>
+
     <ImageView
         android:id="@+id/img_profile"
         android:layout_width="150dp"
@@ -68,12 +92,12 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Upload Photo"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="5dp" />
 
     <Button
         android:id="@+id/btn_register"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="Register"
-        android:layout_marginTop="30dp" />
+        android:layout_marginTop="5dp" />
 </LinearLayout>

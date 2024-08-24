@@ -8,6 +8,8 @@ import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -37,6 +39,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mBtnUploadPhoto;
     private ImageView mImgProfile;
     private Uri mImageUri;
+    private RadioGroup mRgRole; // Add this to select tenant or landlord
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -59,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnRegister = findViewById(R.id.btn_register);
         mBtnUploadPhoto = findViewById(R.id.btn_upload_photo);
         mImgProfile = findViewById(R.id.img_profile);
+        mRgRole = findViewById(R.id.rg_role); // Initialize the role selection RadioGroup
 
         // Sign up for image upload options
         mBtnUploadPhoto.setOnClickListener(v -> openImageSelector());
@@ -69,9 +73,10 @@ public class RegisterActivity extends AppCompatActivity {
             String username = mEtUsername.getText().toString().trim();
             String password = mEtPassword.getText().toString().trim();
             String confirmPassword = mEtConfirmPassword.getText().toString().trim();
+            String role = ((RadioButton) findViewById(mRgRole.getCheckedRadioButtonId())).getText().toString().toLowerCase(); // Get the selected role
 
             // Validation input
-            if (email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            if (email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty()) {
                 Toast.makeText(RegisterActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -82,12 +87,12 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             // Register user
-            registerUser(email, username, password);
+            registerUser(email, username, password, role);
         });
     }
 
     // Method of user registration
-    private void registerUser(String email, String username, String password) {
+    private void registerUser(String email, String username, String password, String role) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -97,6 +102,7 @@ public class RegisterActivity extends AppCompatActivity {
                             HashMap<String, String> userMap = new HashMap<>();
                             userMap.put("username", username);
                             userMap.put("email", email);
+                            userMap.put("role", role); // Add the role to the user map
 
                             // Upload profile image
                             if (mImageUri != null) {
