@@ -28,8 +28,11 @@ public class LandlordDashboardFragment extends Fragment {
         mManagePermissions = view.findViewById(R.id.ManagePermissions);
 
         mAddRemoveTenant.setOnClickListener(v -> {
-            Toast.makeText(getActivity(), "Add/Remove Tenant clicked", Toast.LENGTH_SHORT).show();
-            // TODO: add tenant
+            // Add/Remove tenant
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new ManageTenantsFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
 
         mTenantUsageRecords.setOnClickListener(v -> {
