@@ -6,9 +6,11 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,12 +36,14 @@ public class ManageTenantsFragment extends Fragment {
 
     private ListView tenantListView;
     private Button addTenantButton;
+    private Spinner propertySpinner; // Property selection spinner
     private DatabaseReference mDatabase;
     private StorageReference mStorageReference;
     private FirebaseAuth mAuth;
     private TenantListAdapter adapter;
     private ArrayList<String> tenantList = new ArrayList<>();
     private ArrayList<String> tenantIdList = new ArrayList<>(); // To store tenant IDs
+    private String selectedProperty = "House 1"; // Default selected property
 
     @Nullable
     @Override
@@ -48,6 +52,7 @@ public class ManageTenantsFragment extends Fragment {
 
         tenantListView = view.findViewById(R.id.tenantListView);
         addTenantButton = view.findViewById(R.id.addTenantButton);
+        propertySpinner = view.findViewById(R.id.spinnerPropertySelection); // Spinner for selecting property
 
         // Initialize
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
@@ -58,8 +63,31 @@ public class ManageTenantsFragment extends Fragment {
         adapter = new TenantListAdapter();
         tenantListView.setAdapter(adapter);
 
+        // Set up property spinner adapter
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.property_options,
+                android.R.layout.simple_spinner_item
+        );
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        propertySpinner.setAdapter(spinnerAdapter);
+
+        // Set listener for property spinner
+        propertySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedProperty = parent.getItemAtPosition(position).toString();
+                loadTenantList(selectedProperty);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         // Load tenant list
-        loadTenantList();
+        loadTenantList(selectedProperty);
 
         // Set add tenant button click event
         addTenantButton.setOnClickListener(v -> showAddTenantDialog());
@@ -67,18 +95,21 @@ public class ManageTenantsFragment extends Fragment {
         return view;
     }
 
-    private void loadTenantList() {
+    private void loadTenantList(String selectedProperty) {
         mDatabase.orderByChild("role").equalTo("tenant").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 tenantList.clear();
                 tenantIdList.clear();
 
                 for (DataSnapshot tenantSnapshot : task.getResult().getChildren()) {
-                    String tenantName = tenantSnapshot.child("username").getValue(String.class);
-                    String tenantId = tenantSnapshot.getKey();
+                    String tenantProperty = tenantSnapshot.child("property").getValue(String.class);
+                    if (tenantProperty != null && tenantProperty.equals(selectedProperty)) {  // Filter tenants by property
+                        String tenantName = tenantSnapshot.child("username").getValue(String.class);
+                        String tenantId = tenantSnapshot.getKey();
 
-                    tenantList.add(tenantName != null ? tenantName : "Unknown User");
-                    tenantIdList.add(tenantId); // Store the tenant ID
+                        tenantList.add(tenantName != null ? tenantName : "Unknown User");
+                        tenantIdList.add(tenantId); // Store the tenant ID
+                    }
                 }
 
                 adapter.notifyDataSetChanged();
@@ -94,19 +125,19 @@ public class ManageTenantsFragment extends Fragment {
     private void showAddTenantDialog() {
         // Create a dialog for landlord to input new tenant information
         AddTenantDialogFragment dialog = new AddTenantDialogFragment();
-        dialog.setListener((email, username, password, imageUri) -> {
-            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+        dialog.setListener((email, username, password, imageUri, property) -> {
+            if (TextUtils.isEmpty(email) || TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(property)) {
                 Toast.makeText(getActivity(), "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Register tenant using Firebase Authentication
-            registerTenant(email, username, password, imageUri);
+            // Register tenant using Firebase Authentication with the selected property
+            registerTenant(email, username, password, imageUri, property);
         });
         dialog.show(getChildFragmentManager(), "AddTenantDialogFragment");
     }
 
-    private void registerTenant(String email, String username, String password, Uri imageUri) {
+    private void registerTenant(String email, String username, String password, Uri imageUri, String property) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(getActivity(), task -> {
                     if (task.isSuccessful()) {
@@ -118,6 +149,7 @@ public class ManageTenantsFragment extends Fragment {
                             userMap.put("username", username);
                             userMap.put("email", email);
                             userMap.put("role", "tenant");
+                            userMap.put("property", property); // Add the selected property to user data
 
                             if (imageUri != null) {
                                 uploadProfileImage(tenantId, userMap, imageUri);
@@ -149,7 +181,7 @@ public class ManageTenantsFragment extends Fragment {
         mDatabase.child(userId).setValue(userMap).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(getActivity(), "Tenant added successfully", Toast.LENGTH_SHORT).show();
-                loadTenantList();
+                loadTenantList(selectedProperty);  // Re-load the tenant list for the selected property
             } else {
                 Toast.makeText(getActivity(), "Failed to add tenant: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }
@@ -174,7 +206,7 @@ public class ManageTenantsFragment extends Fragment {
                                     mDatabase.child(tenantId).removeValue().addOnCompleteListener(dbTask -> {
                                         if (dbTask.isSuccessful()) {
                                             Toast.makeText(getActivity(), "Tenant removed successfully", Toast.LENGTH_SHORT).show();
-                                            loadTenantList();
+                                            loadTenantList(selectedProperty);  // Re-load the tenant list
                                         } else {
                                             Toast.makeText(getActivity(), "Failed to remove tenant from database", Toast.LENGTH_SHORT).show();
                                         }
@@ -187,7 +219,7 @@ public class ManageTenantsFragment extends Fragment {
                                 mDatabase.child(tenantId).removeValue().addOnCompleteListener(dbTask -> {
                                     if (dbTask.isSuccessful()) {
                                         Toast.makeText(getActivity(), "Tenant removed successfully", Toast.LENGTH_SHORT).show();
-                                        loadTenantList();
+                                        loadTenantList(selectedProperty);  // Re-load the tenant list
                                     } else {
                                         Toast.makeText(getActivity(), "Failed to remove tenant from database", Toast.LENGTH_SHORT).show();
                                     }

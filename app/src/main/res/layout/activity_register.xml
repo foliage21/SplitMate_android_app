@@ -1,103 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:fillViewport="true">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Register"
-        android:textSize="24sp"
-        android:gravity="center"
-        android:layout_marginTop="50dp" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <EditText
-        android:id="@+id/et_register_email"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Email"
-        android:textSize="16sp"
-        android:layout_marginTop="30dp"
-        android:maxLines="1"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/et_register_user"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Username"
-        android:textSize="16sp"
-        android:layout_marginTop="10dp"
-        android:maxLines="1"
-        android:inputType="text" />
-
-    <EditText
-        android:id="@+id/et_register_password"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Password"
-        android:textSize="16sp"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:layout_marginTop="10dp" />
-
-    <EditText
-        android:id="@+id/et_register_confirm_password"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Confirm Password"
-        android:textSize="16sp"
-        android:inputType="textPassword"
-        android:maxLines="1"
-        android:layout_marginTop="10dp" />
-
-    <RadioGroup
-        android:id="@+id/rg_role"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="20dp">
-
-        <RadioButton
-            android:id="@+id/rb_tenant"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tenant"
-            android:textSize="16sp"
-            android:checked="true" />
+            android:text="Register"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:layout_marginTop="30dp" />
 
-        <RadioButton
-            android:id="@+id/rb_landlord"
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/et_register_email"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Email"
+            android:textSize="16sp"
+            android:layout_marginTop="20dp"
+            android:maxLines="1"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/et_register_user"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Username"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:maxLines="1"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/et_register_password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Password"
+            android:textSize="16sp"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:layout_marginTop="10dp" />
+
+        <EditText
+            android:id="@+id/et_register_confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Confirm Password"
+            android:textSize="16sp"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:layout_marginTop="10dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_role"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Landlord"
-            android:textSize="16sp"
-            android:layout_marginStart="20dp" />
-    </RadioGroup>
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp">
 
-    <ImageView
-        android:id="@+id/img_profile"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/darker_gray"
-        android:contentDescription="Profile Image"
-        android:scaleType="centerCrop" />
+            <RadioButton
+                android:id="@+id/rb_tenant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tenant"
+                android:textSize="16sp"
+                android:checked="true" />
 
-    <Button
-        android:id="@+id/btn_upload_photo"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Upload Photo"
-        android:layout_marginTop="5dp" />
+            <RadioButton
+                android:id="@+id/rb_landlord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Landlord"
+                android:textSize="16sp"
+                android:layout_marginStart="20dp" />
+        </RadioGroup>
 
-    <Button
-        android:id="@+id/btn_register"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Register"
-        android:layout_marginTop="5dp" />
-</LinearLayout>
+        <Spinner
+            android:id="@+id/spinner_property"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="15dp"
+            android:entries="@array/property_options"
+            android:spinnerMode="dropdown" />
+
+        <ImageView
+            android:id="@+id/img_profile"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="15dp"
+            android:background="@android:color/darker_gray"
+            android:contentDescription="Profile Image"
+            android:scaleType="centerCrop" />
+
+        <Button
+            android:id="@+id/btn_upload_photo"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Upload Photo"
+            android:layout_marginTop="5dp" />
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Register"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp" />
+
+    </LinearLayout>
+</ScrollView>

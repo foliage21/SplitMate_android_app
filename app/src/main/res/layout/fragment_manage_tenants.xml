@@ -5,6 +5,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <Spinner
+        android:id="@+id/spinnerPropertySelection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/property_options"
+        android:layout_marginBottom="16dp" />
+
     <ListView
         android:id="@+id/tenantListView"
         android:layout_width="match_parent"

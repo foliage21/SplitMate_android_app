@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -24,10 +25,11 @@ public class AddTenantDialogFragment extends DialogFragment {
     private EditText mEtPassword;
     private ImageView mImgProfile;
     private Uri mImageUri;
+    private Spinner mSpinnerProperty; // Add this for property selection
     private AddTenantListener listener;
 
     public interface AddTenantListener {
-        void onAddTenant(String email, String username, String password, Uri imageUri);
+        void onAddTenant(String email, String username, String password, Uri imageUri, String property);
     }
 
     public void setListener(AddTenantListener listener) {
@@ -46,6 +48,7 @@ public class AddTenantDialogFragment extends DialogFragment {
         mEtUsername = view.findViewById(R.id.etTenantUsername);
         mEtPassword = view.findViewById(R.id.etTenantPassword);
         mImgProfile = view.findViewById(R.id.imgTenantProfile);
+        mSpinnerProperty = view.findViewById(R.id.spinnerTenantProperty); // Initialize Spinner for property selection
         Button btnSelectImage = view.findViewById(R.id.btnSelectImage);
 
         btnSelectImage.setOnClickListener(v -> openImageSelector());
@@ -57,9 +60,10 @@ public class AddTenantDialogFragment extends DialogFragment {
                     String email = mEtEmail.getText().toString().trim();
                     String username = mEtUsername.getText().toString().trim();
                     String password = mEtPassword.getText().toString().trim();
+                    String property = mSpinnerProperty.getSelectedItem().toString(); // Get selected property
 
                     if (listener != null) {
-                        listener.onAddTenant(email, username, password, mImageUri);
+                        listener.onAddTenant(email, username, password, mImageUri, property); // Pass property along
                     }
                 });
 

@@ -24,9 +24,10 @@ import java.util.List;
 
 public class LandlordBillsFragment extends Fragment {
 
-    private Spinner tenantSpinner;
+    private Spinner propertySpinner, tenantSpinner;
     private TextView mWaterBill, mElectricityBill, mInternetBill, mGasBill;
     private DatabaseReference usersRef, billsRef;
+    private List<String> tenantIds = new ArrayList<>();
 
     @Nullable
     @Override
@@ -34,6 +35,7 @@ public class LandlordBillsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_landlord_bills, container, false);
 
         // Initialize
+        propertySpinner = view.findViewById(R.id.propertySpinner);
         tenantSpinner = view.findViewById(R.id.tenantSpinner);
         mWaterBill = view.findViewById(R.id.waterBill);
         mElectricityBill = view.findViewById(R.id.electricityBill);
@@ -43,24 +45,45 @@ public class LandlordBillsFragment extends Fragment {
         usersRef = FirebaseDatabase.getInstance().getReference("users");
         billsRef = FirebaseDatabase.getInstance().getReference("bills");
 
-        loadTenants();
+        // Set up property spinner
+        ArrayAdapter<CharSequence> propertyAdapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.property_options,
+                android.R.layout.simple_spinner_item
+        );
+        propertyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        propertySpinner.setAdapter(propertyAdapter);
+
+        propertySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedProperty = parent.getItemAtPosition(position).toString();
+                loadTenants(selectedProperty); // Load tenants based on selected property
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         return view;
     }
 
-    private void loadTenants() {
+    private void loadTenants(String selectedProperty) {
         usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<String> tenantList = new ArrayList<>();
-                final List<String> tenantIds = new ArrayList<>();
+                tenantIds.clear();
 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String tenantId = snapshot.getKey();
                     String username = snapshot.child("username").getValue(String.class);
                     String role = snapshot.child("role").getValue(String.class);
+                    String property = snapshot.child("property").getValue(String.class);
 
-                    if ("tenant".equals(role)) {
+                    if ("tenant".equals(role) && selectedProperty.equals(property)) {
                         tenantList.add(username != null ? username : "Unknown User");
                         tenantIds.add(tenantId);
                     }
@@ -70,10 +93,10 @@ public class LandlordBillsFragment extends Fragment {
                     tenantList.add("No tenants available");
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                ArrayAdapter<String> tenantAdapter = new ArrayAdapter<>(getContext(),
                         android.R.layout.simple_spinner_item, tenantList);
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                tenantSpinner.setAdapter(adapter);
+                tenantAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                tenantSpinner.setAdapter(tenantAdapter);
 
                 tenantSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override

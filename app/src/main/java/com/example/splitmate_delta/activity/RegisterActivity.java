@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -40,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ImageView mImgProfile;
     private Uri mImageUri;
     private RadioGroup mRgRole; // Add this to select tenant or landlord
+    private Spinner mSpinnerProperty; // Add this to select the property
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -63,6 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnUploadPhoto = findViewById(R.id.btn_upload_photo);
         mImgProfile = findViewById(R.id.img_profile);
         mRgRole = findViewById(R.id.rg_role); // Initialize the role selection RadioGroup
+        mSpinnerProperty = findViewById(R.id.spinner_property); // Initialize the property selection Spinner
 
         // Sign up for image upload options
         mBtnUploadPhoto.setOnClickListener(v -> openImageSelector());
@@ -74,9 +77,10 @@ public class RegisterActivity extends AppCompatActivity {
             String password = mEtPassword.getText().toString().trim();
             String confirmPassword = mEtConfirmPassword.getText().toString().trim();
             String role = ((RadioButton) findViewById(mRgRole.getCheckedRadioButtonId())).getText().toString().toLowerCase(); // Get the selected role
+            String property = mSpinnerProperty.getSelectedItem().toString(); // Get the selected property
 
             // Validation input
-            if (email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty()) {
+            if (email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty() || property.isEmpty()) {
                 Toast.makeText(RegisterActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -87,12 +91,12 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             // Register user
-            registerUser(email, username, password, role);
+            registerUser(email, username, password, role, property);
         });
     }
 
     // Method of user registration
-    private void registerUser(String email, String username, String password, String role) {
+    private void registerUser(String email, String username, String password, String role, String property) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -103,6 +107,7 @@ public class RegisterActivity extends AppCompatActivity {
                             userMap.put("username", username);
                             userMap.put("email", email);
                             userMap.put("role", role); // Add the role to the user map
+                            userMap.put("property", property); // Add the selected property to the user map
 
                             // Upload profile image
                             if (mImageUri != null) {
