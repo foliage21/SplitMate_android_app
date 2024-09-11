@@ -30,21 +30,17 @@ public class TenantBillsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tenant_bills, container, false);
 
-        // Initializes
         mWaterBill = view.findViewById(R.id.waterBill);
         mElectricityBill = view.findViewById(R.id.electricityBill);
         mInternetBill = view.findViewById(R.id.internetBill);
         mGasBill = view.findViewById(R.id.gasBill);
 
-        // Get the currently logged in user
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if (currentUser != null) {
             String tenantId = currentUser.getUid();
-            // // Initializes a Firebase database reference to the current user's billing data
             databaseReference = FirebaseDatabase.getInstance().getReference("bills").child(tenantId);
-            // Load and display billing data from Firebase
             loadBills();
         } else {
             Toast.makeText(getContext(), "User not logged in. Please log in to view your bills.", Toast.LENGTH_SHORT).show();
@@ -58,22 +54,10 @@ public class TenantBillsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    // Reads billing data from Firebase and handles possible Long type conversions
-                    Long waterBillValue = snapshot.child("waterBill").getValue(Long.class);
-                    Long electricityBillValue = snapshot.child("electricityBill").getValue(Long.class);
-                    Long internetBillValue = snapshot.child("internetBill").getValue(Long.class);
-                    Long gasBillValue = snapshot.child("gasBill").getValue(Long.class);
-
-                    // Converts the Long type to String
-                    String waterBill = (waterBillValue != null) ? String.valueOf(waterBillValue) : "N/A";
-                    String electricityBill = (electricityBillValue != null) ? String.valueOf(electricityBillValue) : "N/A";
-                    String internetBill = (internetBillValue != null) ? String.valueOf(internetBillValue) : "N/A";
-                    String gasBill = (gasBillValue != null) ? String.valueOf(gasBillValue) : "N/A";
-
-                    mWaterBill.setText("Water Bill: $" + waterBill);
-                    mElectricityBill.setText("Electricity Bill: $" + electricityBill);
-                    mInternetBill.setText("Internet Bill: $" + internetBill);
-                    mGasBill.setText("Gas Bill: $" + gasBill);
+                    updateBillText(mWaterBill, "Water Bill", snapshot.child("waterBill").getValue(Long.class));
+                    updateBillText(mElectricityBill, "Electricity Bill", snapshot.child("electricityBill").getValue(Long.class));
+                    updateBillText(mInternetBill, "Internet Bill", snapshot.child("internetBill").getValue(Long.class));
+                    updateBillText(mGasBill, "Gas Bill", snapshot.child("gasBill").getValue(Long.class));
                 }
             }
 
@@ -82,5 +66,9 @@ public class TenantBillsFragment extends Fragment {
                 Toast.makeText(getContext(), "Failed to load billing data. Please try again later.", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateBillText(TextView textView, String billType, Long billValue) {
+        textView.setText(billType + ": $" + (billValue != null ? String.valueOf(billValue) : "N/A"));
     }
 }

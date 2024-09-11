@@ -19,11 +19,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initializes the UI control
         mBtnLogin = findViewById(R.id.btn_login);
         mBtnRegister = findViewById(R.id.btn_register);
 
-        //login button
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // register button
         mBtnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

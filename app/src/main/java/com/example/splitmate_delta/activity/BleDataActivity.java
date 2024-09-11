@@ -177,6 +177,7 @@ public class BleDataActivity extends AppCompatActivity {
         );
     }
 
+    //Permission
     private void checkPermissionsAndScan() {
         if (hasPermissions()) {
             scanForDevice();

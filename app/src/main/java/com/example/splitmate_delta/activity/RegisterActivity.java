@@ -40,8 +40,8 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mBtnUploadPhoto;
     private ImageView mImgProfile;
     private Uri mImageUri;
-    private RadioGroup mRgRole; // Add this to select tenant or landlord
-    private Spinner mSpinnerProperty; // Add this to select the property
+    private RadioGroup mRgRole;
+    private Spinner mSpinnerProperty;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -52,7 +52,6 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // Initialize
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         mStorageReference = FirebaseStorage.getInstance().getReference("profile_images");
@@ -64,8 +63,8 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnRegister = findViewById(R.id.btn_register);
         mBtnUploadPhoto = findViewById(R.id.btn_upload_photo);
         mImgProfile = findViewById(R.id.img_profile);
-        mRgRole = findViewById(R.id.rg_role); // Initialize the role selection RadioGroup
-        mSpinnerProperty = findViewById(R.id.spinner_property); // Initialize the property selection Spinner
+        mRgRole = findViewById(R.id.rg_role);
+        mSpinnerProperty = findViewById(R.id.spinner_property);
 
         // Sign up for image upload options
         mBtnUploadPhoto.setOnClickListener(v -> openImageSelector());
@@ -76,8 +75,8 @@ public class RegisterActivity extends AppCompatActivity {
             String username = mEtUsername.getText().toString().trim();
             String password = mEtPassword.getText().toString().trim();
             String confirmPassword = mEtConfirmPassword.getText().toString().trim();
-            String role = ((RadioButton) findViewById(mRgRole.getCheckedRadioButtonId())).getText().toString().toLowerCase(); // Get the selected role
-            String property = mSpinnerProperty.getSelectedItem().toString(); // Get the selected property
+            String role = ((RadioButton) findViewById(mRgRole.getCheckedRadioButtonId())).getText().toString().toLowerCase();
+            String property = mSpinnerProperty.getSelectedItem().toString();
 
             // Validation input
             if (email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty() || property.isEmpty()) {
@@ -106,8 +105,8 @@ public class RegisterActivity extends AppCompatActivity {
                             HashMap<String, String> userMap = new HashMap<>();
                             userMap.put("username", username);
                             userMap.put("email", email);
-                            userMap.put("role", role); // Add the role to the user map
-                            userMap.put("property", property); // Add the selected property to the user map
+                            userMap.put("role", role);
+                            userMap.put("property", property);
 
                             // Upload profile image
                             if (mImageUri != null) {

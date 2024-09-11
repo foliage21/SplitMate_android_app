@@ -3,55 +3,80 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="16dp"
-    android:background="@drawable/background1">
+    android:background="@drawable/background2">
 
-    <Button
-        android:id="@+id/CurrentPermissions"
+    <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@android:color/holo_green_light"
-        android:text="Current Permissions"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:padding="16dp"
-        android:gravity="center" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:rowCount="2"
+        android:columnCount="2"
+        android:orientation="horizontal"
+        android:layout_gravity="center">
 
-    <Button
-        android:id="@+id/UsageRecords"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@android:color/holo_orange_light"
-        android:text="Usage Records"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:padding="16dp"
-        android:gravity="center" />
+        <Button
+            android:id="@+id/CurrentPermissions"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_column="0"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:text="Current Permissions"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="16dp"
+            android:gravity="center" />
 
-    <Button
-        android:id="@+id/RequestAccessPermissions"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginBottom="16dp"
-        android:backgroundTint="@android:color/holo_red_light"
-        android:text="Request Access Permissions"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:padding="16dp"
-        android:gravity="center" />
+        <Button
+            android:id="@+id/UsageRecords"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_column="1"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:text="Usage Records"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="16dp"
+            android:gravity="center" />
 
-    <Button
-        android:id="@+id/btn_control_device"
+        <Button
+            android:id="@+id/RequestAccessPermissions"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_column="0"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:text="Request Access Permissions"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="16dp"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/btn_control_device"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_column="1"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:text="Control Device (TV)"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:padding="16dp"
+            android:gravity="center" />
+
+    </GridLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:text="Control Device (TV)"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:padding="16dp"
-        android:gravity="center" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
+    </LinearLayout>
 
 </LinearLayout>

@@ -4,15 +4,15 @@
     <item
         android:id="@+id/navigation_dashboard"
         android:title="Dashboard"
-        android:icon="@drawable/ic_launcher_background" />
+        android:icon="@drawable/ic_dashboard" />
 
     <item
         android:id="@+id/navigation_bills"
         android:title="Bills"
-        android:icon="@drawable/ic_launcher_background" />
+        android:icon="@drawable/ic_bills" />
 
     <item
         android:id="@+id/navigation_account"
         android:title="Account"
-        android:icon="@drawable/ic_launcher_background" />
+        android:icon="@drawable/ic_account" />
 </menu>

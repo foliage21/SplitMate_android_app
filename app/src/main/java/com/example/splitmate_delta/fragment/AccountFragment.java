@@ -37,7 +37,6 @@ public class AccountFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
-        // Initialize
         mAuth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         FirebaseUser user = mAuth.getCurrentUser();

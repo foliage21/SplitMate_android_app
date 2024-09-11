@@ -3,28 +3,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/white">
 
+    <!-- Spinner for Property Selection -->
     <Spinner
         android:id="@+id/spinnerPropertySelection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:entries="@array/property_options"
-        android:layout_marginBottom="16dp" />
+        android:background="@android:drawable/btn_dropdown"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:popupBackground="@android:color/white" />
 
+    <!-- ListView for displaying tenants -->
     <ListView
         android:id="@+id/tenantListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:padding="8dp"
+        android:background="@android:color/white" />
 
+    <!-- Add Tenant Button using white_black.xml -->
     <Button
         android:id="@+id/addTenantButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Tenant"
         android:layout_marginTop="16dp"
-        android:backgroundTint="@android:color/holo_blue_light"
-        android:textColor="@android:color/white" />
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/btn_white_black"
+        android:textColor="@android:color/black"
+        android:padding="16dp" />
 
 </LinearLayout>

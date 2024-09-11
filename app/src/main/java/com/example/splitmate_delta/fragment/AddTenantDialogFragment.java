@@ -48,7 +48,7 @@ public class AddTenantDialogFragment extends DialogFragment {
         mEtUsername = view.findViewById(R.id.etTenantUsername);
         mEtPassword = view.findViewById(R.id.etTenantPassword);
         mImgProfile = view.findViewById(R.id.imgTenantProfile);
-        mSpinnerProperty = view.findViewById(R.id.spinnerTenantProperty); // Initialize Spinner for property selection
+        mSpinnerProperty = view.findViewById(R.id.spinnerTenantProperty);
         Button btnSelectImage = view.findViewById(R.id.btnSelectImage);
 
         btnSelectImage.setOnClickListener(v -> openImageSelector());
@@ -60,10 +60,10 @@ public class AddTenantDialogFragment extends DialogFragment {
                     String email = mEtEmail.getText().toString().trim();
                     String username = mEtUsername.getText().toString().trim();
                     String password = mEtPassword.getText().toString().trim();
-                    String property = mSpinnerProperty.getSelectedItem().toString(); // Get selected property
+                    String property = mSpinnerProperty.getSelectedItem().toString();
 
                     if (listener != null) {
-                        listener.onAddTenant(email, username, password, mImageUri, property); // Pass property along
+                        listener.onAddTenant(email, username, password, mImageUri, property);
                     }
                 });
 

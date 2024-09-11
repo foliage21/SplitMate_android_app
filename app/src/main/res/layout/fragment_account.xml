@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:text="Username"
         android:textSize="24sp"
-        android:gravity="center" />
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/tv_email"
@@ -20,21 +22,27 @@
         android:layout_height="wrap_content"
         android:text="Email"
         android:textSize="16sp"
-        android:gravity="center" />
+        android:textColor="@android:color/black"
+        android:gravity="center"
+        android:layout_marginTop="10dp" />
 
     <ImageView
         android:id="@+id/iv_profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/default_profile_image" />
+        android:src="@drawable/default_profile_image"
+        android:background="@android:color/darker_gray"
+        android:contentDescription="Profile Image" />
 
     <Button
         android:id="@+id/btn_logout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Logout"
+        android:textColor="@android:color/white"
+        android:background="@drawable/btn_red_white"
         android:layout_marginTop="32dp" />
 
 </LinearLayout>

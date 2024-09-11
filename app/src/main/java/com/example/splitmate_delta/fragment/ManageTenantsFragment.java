@@ -36,14 +36,14 @@ public class ManageTenantsFragment extends Fragment {
 
     private ListView tenantListView;
     private Button addTenantButton;
-    private Spinner propertySpinner; // Property selection spinner
+    private Spinner propertySpinner;
     private DatabaseReference mDatabase;
     private StorageReference mStorageReference;
     private FirebaseAuth mAuth;
     private TenantListAdapter adapter;
     private ArrayList<String> tenantList = new ArrayList<>();
-    private ArrayList<String> tenantIdList = new ArrayList<>(); // To store tenant IDs
-    private String selectedProperty = "House 1"; // Default selected property
+    private ArrayList<String> tenantIdList = new ArrayList<>();
+    private String selectedProperty = "House 1";
 
     @Nullable
     @Override
@@ -52,9 +52,8 @@ public class ManageTenantsFragment extends Fragment {
 
         tenantListView = view.findViewById(R.id.tenantListView);
         addTenantButton = view.findViewById(R.id.addTenantButton);
-        propertySpinner = view.findViewById(R.id.spinnerPropertySelection); // Spinner for selecting property
+        propertySpinner = view.findViewById(R.id.spinnerPropertySelection);
 
-        // Initialize
         mDatabase = FirebaseDatabase.getInstance().getReference("users");
         mStorageReference = FirebaseStorage.getInstance().getReference("profile_images");
         mAuth = FirebaseAuth.getInstance();
@@ -149,7 +148,7 @@ public class ManageTenantsFragment extends Fragment {
                             userMap.put("username", username);
                             userMap.put("email", email);
                             userMap.put("role", "tenant");
-                            userMap.put("property", property); // Add the selected property to user data
+                            userMap.put("property", property);
 
                             if (imageUri != null) {
                                 uploadProfileImage(tenantId, userMap, imageUri);
@@ -181,7 +180,7 @@ public class ManageTenantsFragment extends Fragment {
         mDatabase.child(userId).setValue(userMap).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 Toast.makeText(getActivity(), "Tenant added successfully", Toast.LENGTH_SHORT).show();
-                loadTenantList(selectedProperty);  // Re-load the tenant list for the selected property
+                loadTenantList(selectedProperty);
             } else {
                 Toast.makeText(getActivity(), "Failed to add tenant: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
             }

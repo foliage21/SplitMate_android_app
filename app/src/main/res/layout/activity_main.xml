@@ -6,41 +6,41 @@
     android:orientation="vertical"
     android:padding="20dp"
     android:background="@drawable/background1"
-    android:gravity="center"
+    android:gravity="bottom"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".activity.MainActivity">
 
-    <TextView
-        android:id="@+id/tv_1"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="SplitMate-System"
-        android:textColor="#4CAF50"
-        android:textSize="36sp"
-        android:textStyle="bold"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:fontFamily="@font/note1"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"/>
+        android:layout_marginBottom="30dp">
 
-    <Button
-        android:id="@+id/btn_login"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Login"
-        android:textSize="18sp"
-        android:layout_marginTop="30dp"
-        android:textColor="@android:color/white"
-        android:background="?attr/colorPrimary" />
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="Register"
+            android:textSize="18sp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/btn_white_black"
+            android:layout_marginEnd="10dp"
+            android:elevation="4dp"/>
 
-    <Button
-        android:id="@+id/btn_register"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Register"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp"
-        android:textColor="@android:color/white"
-        android:background="?attr/colorPrimaryDark" />
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="Login"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:background="@drawable/btn_black_white"
+            android:layout_marginStart="10dp"
+            android:elevation="4dp"/>
+    </LinearLayout>
+
 
 </LinearLayout>

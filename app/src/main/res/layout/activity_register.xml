@@ -16,71 +16,82 @@
             android:text="Register"
             android:textSize="24sp"
             android:gravity="center"
-            android:layout_marginTop="30dp" />
+            android:layout_marginTop="30dp"
+            android:textColor="#000000" />
 
         <EditText
             android:id="@+id/et_register_email"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:hint="Email"
             android:textSize="16sp"
             android:layout_marginTop="20dp"
             android:maxLines="1"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:background="@drawable/rounded_edittext"
+            android:layout_gravity="center" />
 
         <EditText
             android:id="@+id/et_register_user"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:hint="Username"
             android:textSize="16sp"
             android:layout_marginTop="10dp"
             android:maxLines="1"
-            android:inputType="text" />
+            android:inputType="text"
+            android:background="@drawable/rounded_edittext"
+            android:layout_gravity="center"/>
 
         <EditText
             android:id="@+id/et_register_password"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:hint="Password"
             android:textSize="16sp"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_gravity="center"/>
+
 
         <EditText
             android:id="@+id/et_register_confirm_password"
-            android:layout_width="match_parent"
+            android:layout_width="300dp"
             android:layout_height="50dp"
             android:hint="Confirm Password"
             android:textSize="16sp"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:layout_marginTop="10dp" />
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_edittext"
+            android:layout_gravity="center"/>
 
         <RadioGroup
             android:id="@+id/rg_role"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_gravity="center"
             android:layout_marginTop="15dp">
 
-            <RadioButton
-                android:id="@+id/rb_tenant"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tenant"
-                android:textSize="16sp"
-                android:checked="true" />
+        <RadioButton
+            android:id="@+id/rb_tenant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tenant"
+            android:textSize="20dp"
+            android:checked="true" />
 
-            <RadioButton
-                android:id="@+id/rb_landlord"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Landlord"
-                android:textSize="16sp"
-                android:layout_marginStart="20dp" />
-        </RadioGroup>
+        <RadioButton
+            android:id="@+id/rb_landlord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Landlord"
+            android:textSize="20dp"
+            android:layout_marginStart="20dp" />
+    </RadioGroup>
 
         <Spinner
             android:id="@+id/spinner_property"
@@ -105,6 +116,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="Upload Photo"
+            android:textColor="@android:color/black"
+            android:background="@drawable/btn_white_black"
             android:layout_marginTop="5dp" />
 
         <Button
@@ -112,6 +125,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="Register"
+            android:textColor="@android:color/white"
+            android:background="@drawable/btn_black_white"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp" />
 
