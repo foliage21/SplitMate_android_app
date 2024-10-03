@@ -41,7 +41,7 @@
             android:maxLines="1"
             android:inputType="text"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <EditText
             android:id="@+id/et_register_password"
@@ -53,8 +53,7 @@
             android:maxLines="1"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center"/>
-
+            android:layout_gravity="center" />
 
         <EditText
             android:id="@+id/et_register_confirm_password"
@@ -66,7 +65,7 @@
             android:maxLines="1"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <RadioGroup
             android:id="@+id/rg_role"
@@ -76,29 +75,29 @@
             android:layout_gravity="center"
             android:layout_marginTop="15dp">
 
-        <RadioButton
-            android:id="@+id/rb_tenant"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tenant"
-            android:textSize="20dp"
-            android:checked="true" />
+            <RadioButton
+                android:id="@+id/rb_tenant"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tenant"
+                android:textSize="20dp"
+                android:checked="true" />
 
-        <RadioButton
-            android:id="@+id/rb_landlord"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Landlord"
-            android:textSize="20dp"
-            android:layout_marginStart="20dp" />
-    </RadioGroup>
+            <RadioButton
+                android:id="@+id/rb_landlord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Landlord"
+                android:textSize="20dp"
+                android:layout_marginStart="20dp" />
+        </RadioGroup>
 
         <Spinner
-            android:id="@+id/spinner_property"
+            android:id="@+id/spinner_houseId"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
-            android:entries="@array/property_options"
+            android:entries="@array/houseId_options"
             android:spinnerMode="dropdown" />
 
         <ImageView
@@ -124,7 +123,28 @@
             android:id="@+id/btn_register"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Register"
+            android:text="Get Verification Code"
+            android:textColor="@android:color/white"
+            android:background="@drawable/btn_black_white"
+            android:layout_marginTop="5dp" />
+
+        <EditText
+            android:id="@+id/et_register_confirmation_code"
+            android:layout_width="300dp"
+            android:layout_height="50dp"
+            android:hint="Enter Verification Code"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:maxLines="1"
+            android:inputType="text"
+            android:background="@drawable/rounded_edittext"
+            android:layout_gravity="center" />
+
+        <Button
+            android:id="@+id/btn_confirm_signup"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Confirm registration"
             android:textColor="@android:color/white"
             android:background="@drawable/btn_black_white"
             android:layout_marginTop="5dp"

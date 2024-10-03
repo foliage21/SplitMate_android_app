@@ -22,15 +22,10 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.splitmate_delta.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class BleDataActivity extends AppCompatActivity {
 
@@ -39,7 +34,6 @@ public class BleDataActivity extends AppCompatActivity {
     private BluetoothGatt bluetoothGatt;
     private TextView statusTextView, lastOperationTimeTextView, lastOperationTypeTextView, totalUsageTimeTextView;
     private ImageView statusIcon;
-    private DatabaseReference deviceControlsRef;
     private long deviceTurnOnTimestamp = 0;
 
     @Override
@@ -48,8 +42,6 @@ public class BleDataActivity extends AppCompatActivity {
         setContentView(R.layout.activity_ble_data);
 
         initUIComponents();
-
-        deviceControlsRef = FirebaseDatabase.getInstance().getReference("deviceControls");
 
         BluetoothAdapter bluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
@@ -99,7 +91,6 @@ public class BleDataActivity extends AppCompatActivity {
                         if (newState == BluetoothProfile.STATE_CONNECTED) {
                             deviceTurnOnTimestamp = timestamp;
                             updateUIOnConnectionChange("Device connected", R.color.green, "Turned on", timestamp);
-                            uploadDataToFirebase("open", timestamp);
                         } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                             updateUIOnConnectionChange("Device disconnected", R.color.red, "Turned off", timestamp);
                             if (deviceTurnOnTimestamp != 0) {
@@ -107,7 +98,6 @@ public class BleDataActivity extends AppCompatActivity {
                                 String durationString = formatDuration(duration);
                                 totalUsageTimeTextView.setText("Total usage time: " + durationString);
                             }
-                            uploadDataToFirebase("close", timestamp);
                         }
                     });
                 }
@@ -135,20 +125,6 @@ public class BleDataActivity extends AppCompatActivity {
         statusIcon.setColorFilter(ContextCompat.getColor(BleDataActivity.this, colorResId), android.graphics.PorterDuff.Mode.SRC_IN);
         lastOperationTimeTextView.setText("Last operation time: " + formattedTime);
         lastOperationTypeTextView.setText("Last operation type: " + operationType);
-    }
-
-    // Firebase
-    private void uploadDataToFirebase(String action, long timestamp) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference userHistoryRef = deviceControlsRef.child(userId).child("controlHistory").push();
-
-        Map<String, Object> controlData = new HashMap<>();
-        controlData.put("action", action);
-        controlData.put("timestamp", timestamp);
-
-        userHistoryRef.setValue(controlData)
-                .addOnSuccessListener(aVoid -> showToast("Operation recorded"))
-                .addOnFailureListener(e -> showToast("Failed to upload: " + e.getMessage()));
     }
 
     private String formatDuration(long durationInMillis) {

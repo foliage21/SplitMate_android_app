@@ -1,6 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fragment_landlord_bills"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -8,17 +10,47 @@
     android:padding="16dp"
     android:background="@drawable/background2">
 
-    <include
+    <!-- Property selection using AutoCompleteTextView -->
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/propertyTextInputLayout"
-        layout="@layout/spinner_dropdown"
-        android:hint="Select Property" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Select Property">
 
-    <include
+        <AutoCompleteTextView
+            android:id="@+id/spinnerPropertySelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:inputType="none"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Tenant selection using AutoCompleteTextView -->
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tenantTextInputLayout"
-        layout="@layout/spinner_dropdown"
-        android:hint="Select Tenant" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:hint="Select Tenant">
 
+        <AutoCompleteTextView
+            android:id="@+id/spinnerTenantSelection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:padding="12dp"
+            android:inputType="none"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Water Bill CardView -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/waterBillCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -43,7 +75,9 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Electricity Bill CardView -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/electricityBillCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -68,7 +102,9 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Internet Bill CardView -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/internetBillCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
@@ -93,7 +129,9 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Gas Bill CardView -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/gasBillCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="8dp"

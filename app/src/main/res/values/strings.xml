@@ -3,10 +3,10 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string-array name="property_options">
-        <item>House 1</item>
-        <item>House 2</item>
-        <item>House 3</item>
+    <string-array name="houseId_options">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
     </string-array>
 
 </resources>

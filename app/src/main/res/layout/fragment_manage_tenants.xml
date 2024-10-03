@@ -11,7 +11,7 @@
         android:id="@+id/spinnerPropertySelection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/property_options"
+        android:entries="@array/houseId_options"
         android:background="@android:drawable/btn_dropdown"
         android:padding="12dp"
         android:layout_marginBottom="16dp"

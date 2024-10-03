@@ -1,5 +1,7 @@
 package com.example.splitmate_delta.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,20 +12,22 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.example.splitmate_delta.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.splitmate_delta.api.ApiClient;
+import com.example.splitmate_delta.api.BackendApiService;
+import com.example.splitmate_delta.models.bills.BillByUserId;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class TenantBillsFragment extends Fragment {
 
     private TextView mWaterBill, mElectricityBill, mInternetBill, mGasBill;
-    private DatabaseReference databaseReference;
-    private FirebaseAuth mAuth;
+    private BackendApiService apiService;
 
     @Nullable
     @Override
@@ -35,13 +39,12 @@ public class TenantBillsFragment extends Fragment {
         mInternetBill = view.findViewById(R.id.internetBill);
         mGasBill = view.findViewById(R.id.gasBill);
 
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        apiService = ApiClient.getApiService();
 
-        if (currentUser != null) {
-            String tenantId = currentUser.getUid();
-            databaseReference = FirebaseDatabase.getInstance().getReference("bills").child(tenantId);
-            loadBills();
+        // Gets the current user ID
+        int tenantId = getCurrentUserId();
+        if (tenantId != -1) {
+            loadBills(tenantId);
         } else {
             Toast.makeText(getContext(), "User not logged in. Please log in to view your bills.", Toast.LENGTH_SHORT).show();
         }
@@ -49,26 +52,50 @@ public class TenantBillsFragment extends Fragment {
         return view;
     }
 
-    private void loadBills() {
-        databaseReference.addValueEventListener(new ValueEventListener() {
+    // Get the user ID from SharedPreferences
+    private int getCurrentUserId() {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt("userId", -1);
+    }
+
+    // API
+    private void loadBills(int tenantId) {
+        Call<List<BillByUserId>> call = apiService.getBillsByUserId(tenantId);
+        call.enqueue(new Callback<List<BillByUserId>>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    updateBillText(mWaterBill, "Water Bill", snapshot.child("waterBill").getValue(Long.class));
-                    updateBillText(mElectricityBill, "Electricity Bill", snapshot.child("electricityBill").getValue(Long.class));
-                    updateBillText(mInternetBill, "Internet Bill", snapshot.child("internetBill").getValue(Long.class));
-                    updateBillText(mGasBill, "Gas Bill", snapshot.child("gasBill").getValue(Long.class));
+            public void onResponse(Call<List<BillByUserId>> call, Response<List<BillByUserId>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<BillByUserId> bills = response.body();
+                    for (BillByUserId bill : bills) {
+                        updateBillText(bill);
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Failed to load bills", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Failed to load billing data. Please try again later.", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<BillByUserId>> call, Throwable t) {
+                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void updateBillText(TextView textView, String billType, Long billValue) {
-        textView.setText(billType + ": $" + (billValue != null ? String.valueOf(billValue) : "N/A"));
+    // Update the billing information and display the name
+    private void updateBillText(BillByUserId bill) {
+        switch (bill.getName().toLowerCase()) {
+            case "water bill":
+                mWaterBill.setText(bill.getName() + ": $" + bill.getAmount());
+                break;
+            case "electricity bill":
+                mElectricityBill.setText(bill.getName() + ": $" + bill.getAmount());
+                break;
+            case "internet bill":
+                mInternetBill.setText(bill.getName() + ": $" + bill.getAmount());
+                break;
+            case "gas bill":
+                mGasBill.setText(bill.getName() + ": $" + bill.getAmount());
+                break;
+        }
     }
 }

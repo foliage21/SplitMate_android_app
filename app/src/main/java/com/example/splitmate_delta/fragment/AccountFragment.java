@@ -1,5 +1,7 @@
 package com.example.splitmate_delta.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,19 +16,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.splitmate_delta.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.example.splitmate_delta.api.ApiClient;
+import com.example.splitmate_delta.api.BackendApiService;
+import com.example.splitmate_delta.models.User;
 import com.squareup.picasso.Picasso;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AccountFragment extends Fragment {
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
     private TextView mTvUsername;
     private TextView mTvEmail;
     private ImageView mIvProfileImage;
@@ -37,48 +37,55 @@ public class AccountFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        FirebaseUser user = mAuth.getCurrentUser();
-
         mTvUsername = view.findViewById(R.id.tv_username);
         mTvEmail = view.findViewById(R.id.tv_email);
         mIvProfileImage = view.findViewById(R.id.iv_profile_image);
         mBtnLogout = view.findViewById(R.id.btn_logout);
 
-        if (user != null) {
-            // Set email directly from FirebaseUser
-            mTvEmail.setText(user.getEmail());
+        // Get the user ID from SharedPreferences
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        int userId = sharedPreferences.getInt("userId", -1);
 
-            // Retrieve username and profile image from Firebase Realtime Database
-            String userId = user.getUid();
-            mDatabase.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+        if (userId != -1) {
+
+            BackendApiService apiService = ApiClient.getApiService();
+            Call<User> call = apiService.getUserById(userId);
+
+            call.enqueue(new Callback<User>() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        String username = dataSnapshot.child("username").getValue(String.class);
-                        String profileImageUrl = dataSnapshot.child("profileImageUrl").getValue(String.class);
+                public void onResponse(Call<User> call, Response<User> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        User user = response.body();
+                        mTvUsername.setText(user.getName());
+                        mTvEmail.setText(user.getEmail());
 
-                        mTvUsername.setText(username != null ? username : "No username");
-
-                        if (profileImageUrl != null) {
-                            Picasso.get().load(profileImageUrl).into(mIvProfileImage);
+                        // Load user avatars using Picasso
+                        if (user.getImage() != null) {
+                            Picasso.get().load(user.getImage()).into(mIvProfileImage);
                         } else {
-                            mIvProfileImage.setImageResource(R.drawable.default_profile_image); // Set a default image if no profile image is available
+                            mIvProfileImage.setImageResource(R.drawable.default_profile_image);
                         }
+                    } else {
+                        Toast.makeText(getContext(), "Failed to load user data. Procedure", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Toast.makeText(getContext(), "Failed to load Account data. Please try again.", Toast.LENGTH_SHORT).show();
+                public void onFailure(Call<User> call, Throwable t) {
+                    Toast.makeText(getContext(), "error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+        } else {
+            Toast.makeText(getContext(), "The user ID is invalid. Please log in again", Toast.LENGTH_SHORT).show();
         }
 
-        // Set logout button click listener
+        // Set the logout button click event
         mBtnLogout.setOnClickListener(v -> {
-            mAuth.signOut();
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.clear();  // Clear SharedPreferences
+            editor.apply();
+
             getActivity().finish();
         });
 

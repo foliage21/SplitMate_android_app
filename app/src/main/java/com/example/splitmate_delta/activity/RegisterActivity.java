@@ -18,137 +18,162 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.splitmate_delta.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.example.splitmate_delta.api.ApiClient;
+import com.example.splitmate_delta.api.BackendApiService;
+import com.example.splitmate_delta.models.addphoto.AddPhotoResponse;
+import com.example.splitmate_delta.models.signup.SignupRequest;
+import com.example.splitmate_delta.models.signup.ConfirmSignupRequest;
+import com.example.splitmate_delta.utils.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.UUID;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText mEtEmail;
-    private EditText mEtUsername;
-    private EditText mEtPassword;
-    private EditText mEtConfirmPassword;
-    private Button mBtnRegister;
-    private Button mBtnUploadPhoto;
+    private EditText mEtEmail, mEtUsername, mEtPassword, mEtConfirmPassword, mEtConfirmationCode;
+    private Button mBtnRegister, mBtnUploadPhoto, mBtnConfirmSignup;
     private ImageView mImgProfile;
     private Uri mImageUri;
     private RadioGroup mRgRole;
-    private Spinner mSpinnerProperty;
+    private Spinner mSpinnerHouseId;
+    private String uploadedImageUrl;
 
-    private FirebaseAuth mAuth;
-    private DatabaseReference mDatabase;
-    private StorageReference mStorageReference;
+    private BackendApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference("users");
-        mStorageReference = FirebaseStorage.getInstance().getReference("profile_images");
+        apiService = ApiClient.getApiService();
 
         mEtEmail = findViewById(R.id.et_register_email);
         mEtUsername = findViewById(R.id.et_register_user);
         mEtPassword = findViewById(R.id.et_register_password);
         mEtConfirmPassword = findViewById(R.id.et_register_confirm_password);
+        mEtConfirmationCode = findViewById(R.id.et_register_confirmation_code);
         mBtnRegister = findViewById(R.id.btn_register);
         mBtnUploadPhoto = findViewById(R.id.btn_upload_photo);
+        mBtnConfirmSignup = findViewById(R.id.btn_confirm_signup);
         mImgProfile = findViewById(R.id.img_profile);
         mRgRole = findViewById(R.id.rg_role);
-        mSpinnerProperty = findViewById(R.id.spinner_property);
+        mSpinnerHouseId = findViewById(R.id.spinner_houseId);
 
-        // Sign up for image upload options
+        // upload pictures
         mBtnUploadPhoto.setOnClickListener(v -> openImageSelector());
 
-        // Set up register button
+        // Register button (click to upload pictures before registering)
         mBtnRegister.setOnClickListener(v -> {
-            String email = mEtEmail.getText().toString().trim();
-            String username = mEtUsername.getText().toString().trim();
-            String password = mEtPassword.getText().toString().trim();
-            String confirmPassword = mEtConfirmPassword.getText().toString().trim();
-            String role = ((RadioButton) findViewById(mRgRole.getCheckedRadioButtonId())).getText().toString().toLowerCase();
-            String property = mSpinnerProperty.getSelectedItem().toString();
+            if (mImageUri != null) {
+                File file = FileUtils.getFileFromUri(this, mImageUri);
+                if (file != null) {
+                    uploadPhotoAndRegister(file); // Upload pictures and register
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Unable to upload pictures", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                registerUser(null);
+            }
+        });
 
-            // Validation input
-            if (email.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || role.isEmpty() || property.isEmpty()) {
-                Toast.makeText(RegisterActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
-                return;
+        // Confirm registration button recognition
+        mBtnConfirmSignup.setOnClickListener(v -> confirmSignup());
+    }
+
+    // Upload pictures and register users
+    private void uploadPhotoAndRegister(File file) {
+        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+
+        apiService.uploadPhoto(body).enqueue(new Callback<AddPhotoResponse>() {
+            @Override
+            public void onResponse(Call<AddPhotoResponse> call, Response<AddPhotoResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Obtain the URL of the uploaded image
+                    uploadedImageUrl = response.body().getPhotoUrl();
+
+                    // After uploading the picture successfully, register the user
+                    registerUser(uploadedImageUrl);
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
+                }
             }
 
-            if (!password.equals(confirmPassword)) {
-                Toast.makeText(RegisterActivity.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-                return;
+            @Override
+            public void onFailure(Call<AddPhotoResponse> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Image uploading error", Toast.LENGTH_SHORT).show();
             }
-
-            // Register user
-            registerUser(email, username, password, role, property);
         });
     }
 
-    // Method of user registration
-    private void registerUser(String email, String username, String password, String role, String property) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, task -> {
-                    if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) {
-                            String userId = user.getUid();
-                            HashMap<String, String> userMap = new HashMap<>();
-                            userMap.put("username", username);
-                            userMap.put("email", email);
-                            userMap.put("role", role);
-                            userMap.put("property", property);
+    // user registration
+    private void registerUser(String imageUrl) {
+        String email = mEtEmail.getText().toString().trim();
+        String username = mEtUsername.getText().toString().trim();
+        String password = mEtPassword.getText().toString().trim();
+        String confirmPassword = mEtConfirmPassword.getText().toString().trim();
+        String role = ((RadioButton) findViewById(mRgRole.getCheckedRadioButtonId())).getText().toString().toLowerCase();
+        String houseId = mSpinnerHouseId.getSelectedItem().toString();
 
-                            // Upload profile image
-                            if (mImageUri != null) {
-                                uploadProfileImage(userId, userMap);
-                            } else {
-                                writeUserData(userId, userMap);
-                            }
-                        }
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        System.out.println("Error during registration: " + task.getException().getMessage());
-                    }
-                });
-    }
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(this, "Password mismatch", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-    // Method to upload profile image to Firebase Storage
-    private void uploadProfileImage(String userId, HashMap<String, String> userMap) {
-        String imageName = UUID.randomUUID().toString();
-        StorageReference imageRef = mStorageReference.child(userId + "/" + imageName);
+        SignupRequest signupRequest = new SignupRequest(username, password, email, Integer.parseInt(houseId), role, imageUrl);
 
-        UploadTask uploadTask = imageRef.putFile(mImageUri);
-        uploadTask.addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-            userMap.put("profileImageUrl", uri.toString());
-            writeUserData(userId, userMap);
-        })).addOnFailureListener(e -> {
-            Toast.makeText(RegisterActivity.this, "Image upload failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-            System.out.println("Error uploading image: " + e.getMessage());
+        apiService.registerUser(signupRequest).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegisterActivity.this, "Verification code sent to email", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Registration error", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
-    // Method to write user data to Firebase Realtime Database
-    private void writeUserData(String userId, HashMap<String, String> userMap) {
-        mDatabase.child(userId).setValue(userMap)
-                .addOnCompleteListener(dbTask -> {
-                    if (dbTask.isSuccessful()) {
-                        Toast.makeText(RegisterActivity.this, "Registration successful", Toast.LENGTH_SHORT).show();
-                        finish();
-                    } else {
-                        Toast.makeText(RegisterActivity.this, "Data write failed: " + dbTask.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        System.out.println("Error writing to database: " + dbTask.getException().getMessage());
-                    }
-                });
+    // Confirm registration
+    private void confirmSignup() {
+        String username = mEtUsername.getText().toString().trim();
+        String confirmationCode = mEtConfirmationCode.getText().toString().trim();
+
+        ConfirmSignupRequest confirmSignupRequest = new ConfirmSignupRequest(username, confirmationCode);
+
+        apiService.confirmSignup(confirmSignupRequest).enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(RegisterActivity.this, "registered successfully\n", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                } else {
+                    Toast.makeText(RegisterActivity.this, "Confirm registration failure", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(RegisterActivity.this, "Confirm registration error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     // Open image selector for profile picture

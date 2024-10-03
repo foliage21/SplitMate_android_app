@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:entries="@array/property_options" />
+        android:entries="@array/houseId_options" />
 
     <ImageView
         android:id="@+id/imgTenantProfile"
@@ -59,9 +59,30 @@
         android:id="@+id/btnSelectImage"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="Select Image"
+        android:text="Upload Photo"
         android:layout_marginTop="16dp"
         android:background="@drawable/btn_white_black"
         android:textColor="@android:color/black" />
+
+    <Button
+        android:id="@+id/btnSendVerificationCode"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Send Verification Code"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/btn_white_black"
+        android:textColor="@android:color/black" />
+
+    <EditText
+        android:id="@+id/etConfirmationCode"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:hint="Enter Verification Code"
+        android:inputType="number"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/rounded_edittext" />
 
 </LinearLayout>

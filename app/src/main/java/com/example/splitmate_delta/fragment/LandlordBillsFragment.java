@@ -12,123 +12,155 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.splitmate_delta.R;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
+import com.example.splitmate_delta.api.ApiClient;
+import com.example.splitmate_delta.api.BackendApiService;
+import com.example.splitmate_delta.models.User;
+import com.example.splitmate_delta.models.bills.BillByUserId;
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LandlordBillsFragment extends Fragment {
 
-    private TextInputLayout propertyTextInputLayout, tenantTextInputLayout;
     private AutoCompleteTextView propertyAutoComplete, tenantAutoComplete;
+    private ArrayAdapter<String> tenantAdapter;
+    private ArrayList<String> tenantList = new ArrayList<>();
+    private ArrayList<String> tenantIdList = new ArrayList<>();
+    private BackendApiService apiService;
+    private int selectedHouseId = 1;
     private TextView mWaterBill, mElectricityBill, mInternetBill, mGasBill;
-    private DatabaseReference usersRef, billsRef;
-    private List<String> tenantIds = new ArrayList<>();
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_landlord_bills, container, false);
 
-        // Initialize
-        propertyTextInputLayout = view.findViewById(R.id.propertyTextInputLayout);
-        propertyAutoComplete = propertyTextInputLayout.findViewById(R.id.spinner);
-        propertyTextInputLayout.setHint("Select Property");
+        apiService = ApiClient.getApiService();
 
-        tenantTextInputLayout = view.findViewById(R.id.tenantTextInputLayout);
-        tenantAutoComplete = tenantTextInputLayout.findViewById(R.id.spinner);
-        tenantTextInputLayout.setHint("Select Tenant");
-
+        propertyAutoComplete = view.findViewById(R.id.spinnerPropertySelection);
+        tenantAutoComplete = view.findViewById(R.id.spinnerTenantSelection);
         mWaterBill = view.findViewById(R.id.waterBill);
         mElectricityBill = view.findViewById(R.id.electricityBill);
         mInternetBill = view.findViewById(R.id.internetBill);
         mGasBill = view.findViewById(R.id.gasBill);
 
-        usersRef = FirebaseDatabase.getInstance().getReference("users");
-        billsRef = FirebaseDatabase.getInstance().getReference("bills");
-
+        // Set Property AutoComplete adapter
         ArrayAdapter<CharSequence> propertyAdapter = ArrayAdapter.createFromResource(
-                getContext(),
-                R.array.property_options,
+                requireContext(),
+                R.array.houseId_options,  // houseId options from strings.xml
                 android.R.layout.simple_dropdown_item_1line
         );
         propertyAutoComplete.setAdapter(propertyAdapter);
 
+        propertyAutoComplete.setOnClickListener(v -> propertyAutoComplete.showDropDown());
+
+        tenantAutoComplete.setOnClickListener(v -> tenantAutoComplete.showDropDown());
+
+        // Listen for Property selection
         propertyAutoComplete.setOnItemClickListener((parent, view1, position, id) -> {
-            String selectedProperty = (String) parent.getItemAtPosition(position);
-            loadTenants(selectedProperty);
+            String selectedItem = parent.getItemAtPosition(position).toString();
+            try {
+                selectedHouseId = Integer.parseInt(selectedItem);
+                loadTenantList(selectedHouseId);  // Load tenants for selected property
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Invalid property selected.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Listen for Tenant selection
+        tenantAutoComplete.setOnItemClickListener((parent, view1, position, id) -> {
+            String tenantId = tenantIdList.get(position);  // Get selected tenant ID
+            loadTenantBills(tenantId);  // Load bills for selected tenant
         });
 
         return view;
     }
 
-    private void loadTenants(String selectedProperty) {
-        usersRef.orderByChild("property").equalTo(selectedProperty)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<String> tenantList = new ArrayList<>();
-                        tenantIds.clear();
+    // Load tenant list for a given house ID
+    private void loadTenantList(int houseId) {
+        apiService.getAllUsers().enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    tenantList.clear();
+                    tenantIdList.clear();
 
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String tenantId = snapshot.getKey();
-                            String username = snapshot.child("username").getValue(String.class);
-                            String role = snapshot.child("role").getValue(String.class);
-
-                            if ("tenant".equals(role)) {
-                                tenantList.add(username != null ? username : "Unknown User");
-                                tenantIds.add(tenantId);
-                            }
+                    for (User user : response.body()) {
+                        if ("tenant".equalsIgnoreCase(user.getRole()) && user.getHouseId() == houseId) {
+                            tenantList.add(user.getName());
+                            tenantIdList.add(String.valueOf(user.getId()));
                         }
+                    }
 
-                        if (tenantList.isEmpty()) {
-                            tenantList.add("No tenants available");
-                        }
-
-                        ArrayAdapter<String> tenantAdapter = new ArrayAdapter<>(getContext(),
+                    if (tenantList.isEmpty()) {
+                        Toast.makeText(getContext(), "No tenants found for this property.", Toast.LENGTH_SHORT).show();
+                        tenantAutoComplete.setAdapter(null);
+                    } else {
+                        tenantAdapter = new ArrayAdapter<>(requireContext(),
                                 android.R.layout.simple_dropdown_item_1line, tenantList);
                         tenantAutoComplete.setAdapter(tenantAdapter);
-
-                        tenantAutoComplete.setOnItemClickListener((parent, view12, position, id) -> {
-                            if (!tenantIds.isEmpty() && position < tenantIds.size()) {
-                                String selectedTenantId = tenantIds.get(position);
-                                loadTenantBills(selectedTenantId);
-                            }
-                        });
+                        tenantAutoComplete.showDropDown();
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Toast.makeText(getContext(), "Failed to load tenants. Please try again later.", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void loadTenantBills(String tenantId) {
-        billsRef.child(tenantId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    updateBillText(mWaterBill, "Water Bill", snapshot.child("waterBill").getValue(Long.class));
-                    updateBillText(mElectricityBill, "Electricity Bill", snapshot.child("electricityBill").getValue(Long.class));
-                    updateBillText(mInternetBill, "Internet Bill", snapshot.child("internetBill").getValue(Long.class));
-                    updateBillText(mGasBill, "Gas Bill", snapshot.child("gasBill").getValue(Long.class));
+                } else {
+                    Toast.makeText(getContext(), "Failed to load tenants", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getContext(), "Failed to load billing data. Please try again later.", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Toast.makeText(getContext(), "Error loading tenants", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void updateBillText(TextView textView, String billType, Long billValue) {
-        textView.setText(billType + ": $" + (billValue != null ? String.valueOf(billValue) : "N/A"));
+    // Load bills for a given tenant ID
+    private void loadTenantBills(String tenantId) {
+        apiService.getBillsByUserId(Integer.parseInt(tenantId)).enqueue(new Callback<List<BillByUserId>>() {
+            @Override
+            public void onResponse(Call<List<BillByUserId>> call, Response<List<BillByUserId>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    displayBills(response.body());
+                } else {
+                    Toast.makeText(getContext(), "Failed to load bills", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<BillByUserId>> call, Throwable t) {
+                Toast.makeText(getContext(), "Error loading bills", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // Display bill information
+    private void displayBills(List<BillByUserId> bills) {
+        // Reset bills
+        mWaterBill.setText("Water Bill: $0.00");
+        mElectricityBill.setText("Electricity Bill: $0.00");
+        mInternetBill.setText("Internet Bill: $0.00");
+        mGasBill.setText("Gas Bill: $0.00");
+
+        if (bills.isEmpty()) {
+            Toast.makeText(getContext(), "No bills found for this tenant.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        for (BillByUserId bill : bills) {
+            String billName = bill.getName().toLowerCase();
+            String amountText = "$" + String.format("%.2f", bill.getAmount());
+
+            if (billName.contains("water")) {
+                mWaterBill.setText("Water Bill: " + amountText);
+            } else if (billName.contains("electricity")) {
+                mElectricityBill.setText("Electricity Bill: " + amountText);
+            } else if (billName.contains("internet")) {
+                mInternetBill.setText("Internet Bill: " + amountText);
+            } else if (billName.contains("gas")) {
+                mGasBill.setText("Gas Bill: " + amountText);
+            }
+        }
     }
 }
