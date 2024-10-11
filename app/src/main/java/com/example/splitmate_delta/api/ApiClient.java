@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiClient {
 
     private static Retrofit retrofit = null;
-    private static final String BASE_URL = "http://backend-app.us-east-1.elasticbeanstalk.com/";
+    private static final String BASE_URL = "http://splitmate-app.us-east-1.elasticbeanstalk.com/";
 
     public static Retrofit getClient() {
         if (retrofit == null) {

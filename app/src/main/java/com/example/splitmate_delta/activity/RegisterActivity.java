@@ -1,13 +1,11 @@
 package com.example.splitmate_delta.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -15,22 +13,19 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.splitmate_delta.R;
 import com.example.splitmate_delta.api.ApiClient;
 import com.example.splitmate_delta.api.BackendApiService;
-import com.example.splitmate_delta.models.addphoto.AddPhotoResponse;
-import com.example.splitmate_delta.models.signup.SignupRequest;
 import com.example.splitmate_delta.models.signup.ConfirmSignupRequest;
-import com.example.splitmate_delta.utils.FileUtils;
+import com.example.splitmate_delta.models.signup.SignupRequest;
+import com.example.splitmate_delta.utils.S3UploadUtils;
+import com.example.splitmate_delta.utils.VideoUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -40,13 +35,12 @@ public class RegisterActivity extends AppCompatActivity {
 
     private EditText mEtEmail, mEtUsername, mEtPassword, mEtConfirmPassword, mEtConfirmationCode;
     private Button mBtnRegister, mBtnUploadPhoto, mBtnConfirmSignup;
-    private ImageView mImgProfile;
-    private Uri mImageUri;
+    private Uri mVideoUri;
     private RadioGroup mRgRole;
     private Spinner mSpinnerHouseId;
-    private String uploadedImageUrl;
 
     private BackendApiService apiService;
+    private S3UploadUtils s3UploadUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +48,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         apiService = ApiClient.getApiService();
+        s3UploadUtils = new S3UploadUtils(apiService); // S3UploadUtils
 
         mEtEmail = findViewById(R.id.et_register_email);
         mEtUsername = findViewById(R.id.et_register_user);
@@ -63,24 +58,18 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnRegister = findViewById(R.id.btn_register);
         mBtnUploadPhoto = findViewById(R.id.btn_upload_photo);
         mBtnConfirmSignup = findViewById(R.id.btn_confirm_signup);
-        mImgProfile = findViewById(R.id.img_profile);
         mRgRole = findViewById(R.id.rg_role);
         mSpinnerHouseId = findViewById(R.id.spinner_houseId);
 
-        // upload pictures
-        mBtnUploadPhoto.setOnClickListener(v -> openImageSelector());
+        // The Settings button brings up a dialog box that lets the user choose to shoot a video or upload a video
+        mBtnUploadPhoto.setOnClickListener(v -> showVideoSelectionDialog());
 
-        // Register button (click to upload pictures before registering)
+        // Register button
         mBtnRegister.setOnClickListener(v -> {
-            if (mImageUri != null) {
-                File file = FileUtils.getFileFromUri(this, mImageUri);
-                if (file != null) {
-                    uploadPhotoAndRegister(file); // Upload pictures and register
-                } else {
-                    Toast.makeText(RegisterActivity.this, "Unable to upload pictures", Toast.LENGTH_SHORT).show();
-                }
+            if (mVideoUri != null) {
+                processVideoAndUpload(mVideoUri); // Extract frames and upload them
             } else {
-                registerUser(null);
+                registerUser(null); // Sign up directly when there is no video
             }
         });
 
@@ -88,28 +77,95 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnConfirmSignup.setOnClickListener(v -> confirmSignup());
     }
 
-    // Upload pictures and register users
-    private void uploadPhotoAndRegister(File file) {
-        RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+    // Displays a dialog to choose whether to shoot or upload a video
+    private void showVideoSelectionDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select a video source");
+        builder.setItems(new CharSequence[]{"shoot a video", "upload a video"}, (dialog, which) -> {
+            if (which == 0) {
+                openCameraForVideo();
+            } else {
+                openVideoSelector();
+            }
+        });
+        builder.show();
+    }
 
-        apiService.uploadPhoto(body).enqueue(new Callback<AddPhotoResponse>() {
+    // Turn on the camera to shoot video
+    private void openCameraForVideo() {
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // Limit video length to 10 seconds
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);   // Set video quality
+        captureVideoLauncher.launch(intent);
+    }
+
+    // Select the video from your device's media library
+    private void openVideoSelector() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("video/*");
+        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10); // Limit video length to 10 seconds
+        pickVideoLauncher.launch(intent);
+    }
+
+    // shoot ActivityResultLauncher
+    private final ActivityResultLauncher<Intent> captureVideoLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            Uri videoUri = result.getData().getData();
+                            mVideoUri = videoUri; // URI
+                            Toast.makeText(this, "Successful video shooting", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Video shooting failed", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+    // select ActivityResultLauncher
+    private final ActivityResultLauncher<Intent> pickVideoLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
+                            Uri videoUri = result.getData().getData();
+                            mVideoUri = videoUri; //  URI
+                            Toast.makeText(this, "Video selection successful", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(RegisterActivity.this, "Video selection failure", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+    // Process the video and upload it
+    private void processVideoAndUpload(Uri videoUri) {
+        // Extract frames from the video
+        List<android.graphics.Bitmap> frames = VideoUtils.extractFramesFromVideo(this, videoUri, 30);
+
+        if (frames == null || frames.isEmpty()) {
+            Toast.makeText(this, "Failed to extract any frames", Toast.LENGTH_SHORT).show();
+            // progressDialog.dismiss();
+            return;
+        }
+
+        // Upload frames to S3
+        s3UploadUtils.uploadFrames(this, frames, new S3UploadUtils.UploadCallback() {
             @Override
-            public void onResponse(Call<AddPhotoResponse> call, Response<AddPhotoResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    // Obtain the URL of the uploaded image
-                    uploadedImageUrl = response.body().getPhotoUrl();
-
-                    // After uploading the picture successfully, register the user
-                    registerUser(uploadedImageUrl);
-                } else {
-                    Toast.makeText(RegisterActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
-                }
+            public void onUploadCompleted(List<String> photoUrls) {
+                runOnUiThread(() -> {
+                    // progressDialog.dismiss();
+                    if (!photoUrls.isEmpty()) {
+                        // Use the URL of the last image to register the user
+                        String imageUrl = photoUrls.get(photoUrls.size() - 1);
+                        registerUser(imageUrl);
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "No successfully uploaded images", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<AddPhotoResponse> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Image uploading error", Toast.LENGTH_SHORT).show();
+            public void onUploadFailed() {
+                runOnUiThread(() -> {
+                    // progressDialog.dismiss();
+                    Toast.makeText(RegisterActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
+                });
             }
         });
     }
@@ -128,6 +184,7 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        // Register using the URL of the image
         SignupRequest signupRequest = new SignupRequest(username, password, email, Integer.parseInt(houseId), role, imageUrl);
 
         apiService.registerUser(signupRequest).enqueue(new Callback<ResponseBody>() {
@@ -175,27 +232,4 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-
-    // Open image selector for profile picture
-    private void openImageSelector() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        pickImageLauncher.launch(intent);
-    }
-
-    // The result of image selection
-    private final ActivityResultLauncher<Intent> pickImageLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                        if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            mImageUri = result.getData().getData();
-                            try {
-                                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-                                mImgProfile.setImageBitmap(bitmap);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
 }

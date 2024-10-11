@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -23,27 +22,48 @@
         android:theme="@style/Theme.SplitMate_Delta"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".activityforlandlord.DeviceManagementActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activityforlandlord.ManagePermissionsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activityforlandlord.TenantUsageRecordsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activityforlandlord.ManageTenantsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activityfortenant.RequestAccessPermissionsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activityfortenant.UsageRecordsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activityfortenant.CurrentPermissionsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activityfortenant.BleDataActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activity.NavigationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-    <activity
-        android:name=".activity.BleDataActivity"
-        android:exported="false" />
-    <activity
-        android:name=".activity.NavigationActivity"
-        android:exported="false" />
-    <activity
-        android:name=".activity.LoginActivity"
-        android:exported="false" />
-    <activity
-        android:name=".activity.RegisterActivity"
-        android:exported="false" />
-    <activity
-        android:name=".activity.MainActivity"
-        android:exported="true">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-</application>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 
-    </manifest>
+</manifest>

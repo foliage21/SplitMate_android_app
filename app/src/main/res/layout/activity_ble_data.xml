@@ -80,4 +80,33 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/turnOnButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Turn On"
+            android:layout_marginEnd="16dp"
+            android:backgroundTint="@android:color/black"
+            android:textColor="@android:color/white"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="12dp" />
+
+        <Button
+            android:id="@+id/turnOffButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Turn Off"
+            android:backgroundTint="@android:color/black"
+            android:textColor="@android:color/white"
+            android:paddingHorizontal="32dp"
+            android:paddingVertical="12dp" />
+    </LinearLayout>
+
 </LinearLayout>

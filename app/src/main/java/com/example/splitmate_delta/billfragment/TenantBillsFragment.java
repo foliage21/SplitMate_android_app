@@ -1,4 +1,4 @@
-package com.example.splitmate_delta.fragment;
+package com.example.splitmate_delta.billfragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;

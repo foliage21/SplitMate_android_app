@@ -5,11 +5,11 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
-import com.example.splitmate_delta.fragment.LandlordBillsFragment;
-import com.example.splitmate_delta.fragment.LandlordDashboardFragment;
+import com.example.splitmate_delta.billfragment.LandlordBillsFragment;
+import com.example.splitmate_delta.dashboardfragment.LandlordDashboardFragment;
 import com.example.splitmate_delta.R;
-import com.example.splitmate_delta.fragment.TenantBillsFragment;
-import com.example.splitmate_delta.fragment.TenantDashboardFragment;
+import com.example.splitmate_delta.billfragment.TenantBillsFragment;
+import com.example.splitmate_delta.dashboardfragment.TenantDashboardFragment;
 import com.example.splitmate_delta.fragment.AccountFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 

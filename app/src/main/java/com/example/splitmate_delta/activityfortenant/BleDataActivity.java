@@ -1,4 +1,4 @@
-package com.example.splitmate_delta.activity;
+package com.example.splitmate_delta.activityfortenant;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -13,6 +13,7 @@ import android.bluetooth.le.ScanResult;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Button; // Added import for Button
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class BleDataActivity extends AppCompatActivity {
     private TextView statusTextView, lastOperationTimeTextView, lastOperationTypeTextView, totalUsageTimeTextView;
     private ImageView statusIcon;
     private long deviceTurnOnTimestamp = 0;
+    private Button turnOnButton, turnOffButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +48,6 @@ public class BleDataActivity extends AppCompatActivity {
         BluetoothAdapter bluetoothAdapter = ((BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE)).getAdapter();
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
 
-        checkPermissionsAndScan();
     }
 
     private void initUIComponents() {
@@ -55,9 +56,21 @@ public class BleDataActivity extends AppCompatActivity {
         lastOperationTypeTextView = findViewById(R.id.lastOperationTypeTextView);
         totalUsageTimeTextView = findViewById(R.id.totalUsageTimeTextView);
         statusIcon = findViewById(R.id.statusIcon);
+
+        // Initialize buttons
+        turnOnButton = findViewById(R.id.turnOnButton);
+        turnOffButton = findViewById(R.id.turnOffButton);
+
+        // Set click listeners
+        turnOnButton.setOnClickListener(v -> {
+            checkPermissionsAndScan(); // Start scanning and connect
+        });
+
+        turnOffButton.setOnClickListener(v -> {
+            disconnectFromDevice(); // Disconnect from device
+        });
     }
 
-    // Processing authority
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -74,7 +87,8 @@ public class BleDataActivity extends AppCompatActivity {
     // Scan Bluetooth devices
     private void scanForDevice() {
         if (checkBluetoothPermission(Manifest.permission.BLUETOOTH_SCAN)) {
-            bluetoothLeScanner.startScan(leScanCallback);  // Use leScanCallback
+            showToast("Scanning for device...");
+            bluetoothLeScanner.startScan(leScanCallback);
         } else {
             showToast("Bluetooth scan permission not granted");
         }
@@ -118,6 +132,28 @@ public class BleDataActivity extends AppCompatActivity {
         }
     }
 
+    // Disconnect from device
+    private void disconnectFromDevice() {
+        if (bluetoothGatt != null) {
+            bluetoothGatt.disconnect();
+            bluetoothGatt.close();
+            bluetoothGatt = null;
+            runOnUiThread(() -> {
+                long timestamp = System.currentTimeMillis();
+                updateUIOnConnectionChange("Device disconnected", R.color.red, "Turned off", timestamp);
+                if (deviceTurnOnTimestamp != 0) {
+                    long duration = timestamp - deviceTurnOnTimestamp;
+                    String durationString = formatDuration(duration);
+                    totalUsageTimeTextView.setText("Total usage time: " + durationString);
+                }
+                deviceTurnOnTimestamp = 0;
+                showToast("Disconnected from device");
+            });
+        } else {
+            showToast("No device to disconnect");
+        }
+    }
+
     // Update UI
     private void updateUIOnConnectionChange(String statusMessage, int colorResId, String operationType, long timestamp) {
         String formattedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(timestamp));
@@ -144,7 +180,7 @@ public class BleDataActivity extends AppCompatActivity {
 
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this,
-                new String[] {
+                new String[]{
                         Manifest.permission.BLUETOOTH_SCAN,
                         Manifest.permission.BLUETOOTH_CONNECT,
                         Manifest.permission.ACCESS_FINE_LOCATION
@@ -153,7 +189,7 @@ public class BleDataActivity extends AppCompatActivity {
         );
     }
 
-    //Permission
+    // Permission
     private void checkPermissionsAndScan() {
         if (hasPermissions()) {
             scanForDevice();

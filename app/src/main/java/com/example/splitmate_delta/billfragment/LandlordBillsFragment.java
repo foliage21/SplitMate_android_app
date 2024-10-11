@@ -1,4 +1,4 @@
-package com.example.splitmate_delta.fragment;
+package com.example.splitmate_delta.billfragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

@@ -1,13 +1,13 @@
 package com.example.splitmate_delta.api;
 
 import com.example.splitmate_delta.models.User;
-import com.example.splitmate_delta.models.addphoto.AddPhotoResponse;
-import com.example.splitmate_delta.models.bills.BillByAllBills;
 import com.example.splitmate_delta.models.bills.BillByUserId;
 import com.example.splitmate_delta.models.signup.ConfirmSignupRequest;
 import com.example.splitmate_delta.models.signup.SignupRequest;
 import com.example.splitmate_delta.models.login.LoginRequest;
 import com.example.splitmate_delta.models.login.LoginResponse;
+import com.example.splitmate_delta.models.addphoto.GeneratePresignedUrlsRequest;
+import com.example.splitmate_delta.models.addphoto.GeneratePresignedUrlsResponse;
 
 import java.util.List;
 
@@ -30,10 +30,6 @@ public interface BackendApiService {
     @POST("auth/confirm-signup")
     Call<ResponseBody> confirmSignup(@Body ConfirmSignupRequest confirmSignupRequest);
 
-    @Multipart
-    @POST("s3/addPhoto")
-    Call<AddPhotoResponse> uploadPhoto(@Part MultipartBody.Part image);
-
     @POST("auth/login")
     Call<LoginResponse> loginUser(@Body LoginRequest loginRequest);
 
@@ -49,4 +45,6 @@ public interface BackendApiService {
     @GET("bill/getBillByUserId/{userId}")
     Call<List<BillByUserId>> getBillsByUserId(@Path("userId") int userId);
 
+    @POST("s3/generatePresignedUrls")
+    Call<GeneratePresignedUrlsResponse> generatePresignedUrls(@Body GeneratePresignedUrlsRequest request);
     }
