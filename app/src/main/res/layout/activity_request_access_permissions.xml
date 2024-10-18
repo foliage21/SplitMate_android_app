@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- 保存为 activity_request_access_permissions.xml -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
     android:background="@drawable/background2">
 
     <LinearLayout
+        android:id="@+id/mainLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
 
-        <!-- Title -->
         <TextView
+            android:id="@+id/tvRequestPermissionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Request Access Permissions"
@@ -22,8 +25,8 @@
             android:textColor="@android:color/black"
             android:layout_marginBottom="16dp" />
 
-        <!-- Instruction Text -->
         <TextView
+            android:id="@+id/tvInstruction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Select a device to request access:"
@@ -31,8 +34,8 @@
             android:textColor="@android:color/darker_gray"
             android:layout_marginBottom="12dp" />
 
-        <!-- Device 1: Air Conditioner -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -46,29 +49,28 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/device_airConditioner"
+                    android:id="@+id/device_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Air Conditioner"
+                    android:text="TV"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="8dp" />
 
                 <Button
-                    android:id="@+id/request_airConditioner"
+                    android:id="@+id/request_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Request Access"
                     android:backgroundTint="@color/black"
                     android:textColor="@android:color/white"
-                    android:layout_marginBottom="12dp"
                     app:cornerRadius="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Device 2: Microwave -->
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_microwave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
@@ -98,83 +100,9 @@
                     android:text="Request Access"
                     android:backgroundTint="@color/black"
                     android:textColor="@android:color/white"
-                    android:layout_marginBottom="12dp"
                     app:cornerRadius="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-        <!-- Device 3: Gas Stove -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/device_gasStove"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Gas Stove"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="8dp" />
-
-                <Button
-                    android:id="@+id/request_gasStove"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Request Access"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@android:color/white"
-                    android:layout_marginBottom="12dp"
-                    app:cornerRadius="8dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Device 4: Light -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/device_light"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Light"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="8dp" />
-
-                <Button
-                    android:id="@+id/request_light"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Request Access"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@android:color/white"
-                    android:layout_marginBottom="12dp"
-                    app:cornerRadius="8dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
 
     </LinearLayout>
 </ScrollView>

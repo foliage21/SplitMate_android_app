@@ -32,7 +32,10 @@ import com.example.splitmate_delta.utils.VideoUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Collections;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -48,7 +51,7 @@ public class ManageTenantsActivity extends AppCompatActivity {
     private TenantListAdapter adapter;
     private ArrayList<String> tenantList = new ArrayList<>();
     private ArrayList<String> tenantIdList = new ArrayList<>();
-    private int selectedHouseId = 1;
+    private int selectedHouseId = -1; // Initialize to -1 to indicate no selection
     private Uri mVideoUri;
 
     private S3UploadUtils s3UploadUtils;
@@ -57,6 +60,9 @@ public class ManageTenantsActivity extends AppCompatActivity {
     private String tenantUsername;
     private String tenantPassword;
     private int tenantHouseId;
+
+    private List<User> allUsers = new ArrayList<>();
+    private List<String> houseIdList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,26 +79,25 @@ public class ManageTenantsActivity extends AppCompatActivity {
         adapter = new TenantListAdapter();
         tenantListView.setAdapter(adapter);
 
-        // Set up the Spinner adapter
-        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
-                this,
-                R.array.houseId_options,
-                android.R.layout.simple_spinner_item
-        );
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        propertySpinner.setAdapter(spinnerAdapter);
+        // Load all users and populate property spinner
+        loadAllUsersAndPopulateProperties();
 
         // Listen for the Spinner selection
         propertySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view1, int position, long id) {
-                selectedHouseId = Integer.parseInt(parent.getItemAtPosition(position).toString());
-                loadTenantList(selectedHouseId);
+                String selectedItem = parent.getItemAtPosition(position).toString();
+                try {
+                    selectedHouseId = Integer.parseInt(selectedItem);
+                    loadUserList(selectedHouseId); // Load all users under this house
+                } catch (NumberFormatException e) {
+                    Toast.makeText(ManageTenantsActivity.this, "Invalid property selected.", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // Do nothing
+                selectedHouseId = -1;
             }
         });
 
@@ -100,34 +105,84 @@ public class ManageTenantsActivity extends AppCompatActivity {
         addTenantButton.setOnClickListener(v -> showAddTenantDialog());
     }
 
+    // Load all users and extract unique house IDs
+    private void loadAllUsersAndPopulateProperties() {
+        apiService.getAllUsers().enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    allUsers = response.body();
+
+                    // Extract unique house IDs
+                    Set<Integer> houseIdSet = new HashSet<>();
+                    for (User user : allUsers) {
+                        houseIdSet.add(user.getHouseId());
+                    }
+
+                    // Convert to list of strings and sort
+                    houseIdList = new ArrayList<>();
+                    for (Integer houseId : houseIdSet) {
+                        houseIdList.add(String.valueOf(houseId));
+                    }
+                    Collections.sort(houseIdList);
+
+                    if (houseIdList.isEmpty()) {
+                        Toast.makeText(ManageTenantsActivity.this, "No properties found.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Set up the Spinner adapter with dynamic house IDs
+                        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                                ManageTenantsActivity.this,
+                                android.R.layout.simple_spinner_item,
+                                houseIdList
+                        );
+                        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        propertySpinner.setAdapter(spinnerAdapter);
+                    }
+                } else {
+                    Toast.makeText(ManageTenantsActivity.this, "Failed to load properties", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                Toast.makeText(ManageTenantsActivity.this, "Error loading properties: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
     // The Add Tenant dialog box is displayed
     private void showAddTenantDialog() {
+        if (selectedHouseId == -1) {
+            Toast.makeText(this, "Please select a property first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         AddTenantDialogFragment dialog = new AddTenantDialogFragment();
         dialog.setListener(new AddTenantDialogFragment.AddTenantListener() {
             @Override
             public void onSendVerificationCode(String email, String username, String password, Uri imageUri, String houseId) {
-                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(houseId)) {
-                    Toast.makeText(ManageTenantsActivity.this, "All fields are required", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+                    Toast.makeText(ManageTenantsActivity.this, "Email, username, and password are required", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 tenantEmail = email;
                 tenantUsername = username;
                 tenantPassword = password;
-                tenantHouseId = Integer.parseInt(houseId);
+                tenantHouseId = selectedHouseId; // Use the selected house ID
 
                 if (imageUri != null) {
                     mVideoUri = imageUri;
                     processVideoAndUpload(mVideoUri);
                 } else {
-                    Toast.makeText(ManageTenantsActivity.this, "No video, please try again", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageTenantsActivity.this, "No video selected, please try again", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onConfirmSignup(String username, String confirmationCode) {
                 if (TextUtils.isEmpty(username) || TextUtils.isEmpty(confirmationCode)) {
-                    Toast.makeText(ManageTenantsActivity.this, "The username and verification code are required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageTenantsActivity.this, "Username and verification code are required", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -177,7 +232,7 @@ public class ManageTenantsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(ManageTenantsActivity.this, "The verification code has been sent to the email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageTenantsActivity.this, "Verification code has been sent to the email", Toast.LENGTH_SHORT).show();
                 } else {
                     String errorMessage = "";
                     try {
@@ -189,14 +244,14 @@ public class ManageTenantsActivity extends AppCompatActivity {
                     }
 
                     int errorCode = response.code();
-                    Toast.makeText(ManageTenantsActivity.this, "fail to register: " + errorCode + "\n" + errorMessage, Toast.LENGTH_LONG).show();
-                    System.out.println("fail to register: " + errorCode + "\n" + errorMessage);
+                    Toast.makeText(ManageTenantsActivity.this, "Failed to register: " + errorCode + "\n" + errorMessage, Toast.LENGTH_LONG).show();
+                    System.out.println("Failed to register: " + errorCode + "\n" + errorMessage);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(ManageTenantsActivity.this, "Registration error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageTenantsActivity.this, "Registration error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -209,9 +264,9 @@ public class ManageTenantsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(ManageTenantsActivity.this, "registered successfully", Toast.LENGTH_SHORT).show();
-                    // refresh the tenant list
-                    loadTenantList(selectedHouseId);
+                    Toast.makeText(ManageTenantsActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
+                    // Refresh the user list
+                    loadUserList(selectedHouseId);
                 } else {
                     Toast.makeText(ManageTenantsActivity.this, "Confirm registration failure", Toast.LENGTH_SHORT).show();
                 }
@@ -219,53 +274,38 @@ public class ManageTenantsActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(ManageTenantsActivity.this, "Confirm registration error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ManageTenantsActivity.this, "Confirm registration error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    // Load a tenant list
-    private void loadTenantList(int houseId) {
-        apiService.getAllUsers().enqueue(new Callback<List<User>>() {
-            @Override
-            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                if (response.isSuccessful()) {
-                    tenantList.clear();
-                    tenantIdList.clear();
+    // Load user list for the selected house
+    private void loadUserList(int houseId) {
+        tenantList.clear();
+        tenantIdList.clear();
 
-                    // Filter the tenant of the specified houseId
-                    for (User user : response.body()) {
-                        if ("tenant".equals(user.getRole()) && user.getHouseId() == houseId) {
-                            tenantList.add(user.getName());
-                            tenantIdList.add(String.valueOf(user.getId()));
-                        }
-                    }
-
-                    adapter.notifyDataSetChanged();
-                } else {
-                    Toast.makeText(ManageTenantsActivity.this, "Failed to load tenant", Toast.LENGTH_LONG).show();
-                }
+        for (User user : allUsers) {
+            if (user.getHouseId() == houseId) {
+                tenantList.add(user.getName() + " (" + user.getRole() + ")");
+                tenantIdList.add(String.valueOf(user.getId()));
             }
+        }
 
-            @Override
-            public void onFailure(Call<List<User>> call, Throwable t) {
-                Toast.makeText(ManageTenantsActivity.this, "Error loading tenant: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+        adapter.notifyDataSetChanged();
     }
 
     // Remove tenant
-    private void removeTenant(String tenantId, String tenantName) {
+    private void removeUser(String userId, String userName) {
         new AlertDialog.Builder(this)
-                .setTitle("Delete Tenant")
-                .setMessage("Are you sure you want to delete tenant: " + tenantName + "?")
+                .setTitle("Delete User")
+                .setMessage("Are you sure you want to delete user: " + userName + "?")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    apiService.deleteUser(tenantId).enqueue(new Callback<ResponseBody>() {
+                    apiService.deleteUser(userId).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
-                                Toast.makeText(ManageTenantsActivity.this, "Tenant removed successfully", Toast.LENGTH_SHORT).show();
-                                loadTenantList(selectedHouseId);  // Reload tenant list
+                                Toast.makeText(ManageTenantsActivity.this, "User removed successfully", Toast.LENGTH_SHORT).show();
+                                loadUserList(selectedHouseId);  // Reload user list
                             } else {
                                 String errorMessage = "";
                                 try {
@@ -278,14 +318,14 @@ public class ManageTenantsActivity extends AppCompatActivity {
 
                                 int errorCode = response.code();
                                 String requestUrl = call.request().url().toString();
-                                Toast.makeText(ManageTenantsActivity.this, "Failed to remove tenant: " + errorCode + "\n" + errorMessage, Toast.LENGTH_LONG).show();
-                                System.out.println("Failed to remove tenant: " + errorCode + "\n" + errorMessage + "\nRequest URL: " + requestUrl);
+                                Toast.makeText(ManageTenantsActivity.this, "Failed to remove user: " + errorCode + "\n" + errorMessage, Toast.LENGTH_LONG).show();
+                                System.out.println("Failed to remove user: " + errorCode + "\n" + errorMessage + "\nRequest URL: " + requestUrl);
                             }
                         }
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(ManageTenantsActivity.this, "Error removing tenant: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ManageTenantsActivity.this, "Error removing user: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
                 })
@@ -306,14 +346,14 @@ public class ManageTenantsActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(ManageTenantsActivity.this).inflate(R.layout.item_tenant_delete, parent, false);
             }
 
-            String tenantName = tenantList.get(position);
-            String tenantId = tenantIdList.get(position);
+            String userName = tenantList.get(position);
+            String userId = tenantIdList.get(position);
 
             TextView tenantNameTextView = convertView.findViewById(R.id.tenantNameTextView);
             Button deleteTenantButton = convertView.findViewById(R.id.deleteTenantButton);
 
-            tenantNameTextView.setText(tenantName);
-            deleteTenantButton.setOnClickListener(v -> removeTenant(tenantId, tenantName));
+            tenantNameTextView.setText(userName);
+            deleteTenantButton.setOnClickListener(v -> removeUser(userId, userName));
 
             return convertView;
         }

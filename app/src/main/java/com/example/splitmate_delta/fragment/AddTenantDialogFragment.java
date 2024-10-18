@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -28,8 +27,8 @@ public class AddTenantDialogFragment extends DialogFragment {
     private EditText mEtUsername;
     private EditText mEtPassword;
     private EditText mEtConfirmationCode;
+    private EditText mEtHouseId;
     private Uri mVideoUri;
-    private Spinner mSpinnerProperty;
     private AddTenantListener listener;
 
     public interface AddTenantListener {
@@ -53,7 +52,7 @@ public class AddTenantDialogFragment extends DialogFragment {
         mEtUsername = view.findViewById(R.id.etTenantUsername);
         mEtPassword = view.findViewById(R.id.etTenantPassword);
         mEtConfirmationCode = view.findViewById(R.id.etConfirmationCode);
-        mSpinnerProperty = view.findViewById(R.id.spinnerTenantProperty);
+        mEtHouseId = view.findViewById(R.id.etTenantHouseId);
         Button btnSelectVideo = view.findViewById(R.id.btnSelectVideo);
         Button btnSendVerificationCode = view.findViewById(R.id.btnSendVerificationCode);
 
@@ -77,7 +76,7 @@ public class AddTenantDialogFragment extends DialogFragment {
             String email = mEtEmail.getText().toString().trim();
             String username = mEtUsername.getText().toString().trim();
             String password = mEtPassword.getText().toString().trim();
-            String houseId = mSpinnerProperty.getSelectedItem().toString();
+            String houseId = mEtHouseId.getText().toString().trim();
 
             if (TextUtils.isEmpty(email) || TextUtils.isEmpty(username) || TextUtils.isEmpty(password) || TextUtils.isEmpty(houseId)) {
                 Toast.makeText(getContext(), "All fields are required", Toast.LENGTH_SHORT).show();

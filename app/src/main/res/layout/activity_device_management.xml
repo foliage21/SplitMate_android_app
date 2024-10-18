@@ -37,102 +37,60 @@
                 android:padding="16dp">
 
                 <TextView
-                    android:id="@+id/piTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Manage Raspberry Pi"
+                    android:text="Device UID"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="12dp" />
 
+                <EditText
+                    android:id="@+id/uidEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter Device UID"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/darker_gray"
+                    android:layout_marginBottom="16dp"
+                    android:padding="10dp"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Control your Raspberry Pi devices here."
-                    android:textSize="16sp"
-                    android:textColor="@android:color/darker_gray"
-                    android:layout_marginBottom="16dp" />
-
-                <Button
-                    android:id="@+id/launchAddPiDialogButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Add Pi"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@android:color/white"
-                    android:layout_marginBottom="12dp"
-                    app:cornerRadius="8dp" />
-
-                <Button
-                    android:id="@+id/managePiButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Manage Pi (Change/Delete)"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@android:color/white"
-                    app:cornerRadius="8dp" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="10dp"
-            app:strokeColor="@android:color/darker_gray"
-            app:strokeWidth="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/deviceTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Manage Devices"
+                    android:text="House ID"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="12dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Control and manage your home devices here."
-                    android:textSize="16sp"
-                    android:textColor="@android:color/darker_gray"
-                    android:layout_marginBottom="16dp" />
-
-                <Button
-                    android:id="@+id/launchAddDeviceFragmentButton"
+                <EditText
+                    android:id="@+id/houseIdEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Add Device"
-                    android:backgroundTint="@color/black"
-                    android:textColor="@android:color/white"
-                    android:layout_marginBottom="12dp"
-                    app:cornerRadius="8dp" />
+                    android:hint="Enter House ID"
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@android:color/darker_gray"
+                    android:layout_marginBottom="16dp"
+                    android:padding="10dp"/>
 
                 <Button
-                    android:id="@+id/manageDeviceButton"
+                    android:id="@+id/assignDeviceButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Manage Devices (View/Delete)"
+                    android:text="Assign Device to House"
                     android:backgroundTint="@color/black"
                     android:textColor="@android:color/white"
-                    app:cornerRadius="8dp" />
+                    android:layout_marginTop="24dp"
+                    app:cornerRadius="8dp"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="400dp" />
+            android:layout_height="400dp"
+            android:layout_marginTop="24dp" />
 
     </LinearLayout>
 </ScrollView>

@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -33,11 +32,10 @@ import retrofit2.Response;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText mEtEmail, mEtUsername, mEtPassword, mEtConfirmPassword, mEtConfirmationCode;
+    private EditText mEtEmail, mEtUsername, mEtPassword, mEtConfirmPassword, mEtConfirmationCode, mEtHouseId;
     private Button mBtnRegister, mBtnUploadPhoto, mBtnConfirmSignup;
     private Uri mVideoUri;
     private RadioGroup mRgRole;
-    private Spinner mSpinnerHouseId;
 
     private BackendApiService apiService;
     private S3UploadUtils s3UploadUtils;
@@ -55,11 +53,11 @@ public class RegisterActivity extends AppCompatActivity {
         mEtPassword = findViewById(R.id.et_register_password);
         mEtConfirmPassword = findViewById(R.id.et_register_confirm_password);
         mEtConfirmationCode = findViewById(R.id.et_register_confirmation_code);
+        mEtHouseId = findViewById(R.id.et_register_houseId);
         mBtnRegister = findViewById(R.id.btn_register);
         mBtnUploadPhoto = findViewById(R.id.btn_upload_photo);
         mBtnConfirmSignup = findViewById(R.id.btn_confirm_signup);
         mRgRole = findViewById(R.id.rg_role);
-        mSpinnerHouseId = findViewById(R.id.spinner_houseId);
 
         // The Settings button brings up a dialog box that lets the user choose to shoot a video or upload a video
         mBtnUploadPhoto.setOnClickListener(v -> showVideoSelectionDialog());
@@ -126,10 +124,10 @@ public class RegisterActivity extends AppCompatActivity {
                     result -> {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             Uri videoUri = result.getData().getData();
-                            mVideoUri = videoUri; //  URI
+                            mVideoUri = videoUri; // URI
                             Toast.makeText(this, "Video selection successful", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(RegisterActivity.this, "Video selection failure", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Video selection failed", Toast.LENGTH_SHORT).show();
                         }
                     });
 
@@ -140,7 +138,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (frames == null || frames.isEmpty()) {
             Toast.makeText(this, "Failed to extract any frames", Toast.LENGTH_SHORT).show();
-            // progressDialog.dismiss();
             return;
         }
 
@@ -149,7 +146,6 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onUploadCompleted(List<String> photoUrls) {
                 runOnUiThread(() -> {
-                    // progressDialog.dismiss();
                     if (!photoUrls.isEmpty()) {
                         // Use the URL of the last image to register the user
                         String imageUrl = photoUrls.get(photoUrls.size() - 1);
@@ -163,21 +159,33 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onUploadFailed() {
                 runOnUiThread(() -> {
-                    // progressDialog.dismiss();
                     Toast.makeText(RegisterActivity.this, "Image upload failed", Toast.LENGTH_SHORT).show();
                 });
             }
         });
     }
 
-    // user registration
+    // User registration
     private void registerUser(String imageUrl) {
         String email = mEtEmail.getText().toString().trim();
         String username = mEtUsername.getText().toString().trim();
         String password = mEtPassword.getText().toString().trim();
         String confirmPassword = mEtConfirmPassword.getText().toString().trim();
         String role = ((RadioButton) findViewById(mRgRole.getCheckedRadioButtonId())).getText().toString().toLowerCase();
-        String houseId = mSpinnerHouseId.getSelectedItem().toString();
+
+        String houseIdStr = mEtHouseId.getText().toString().trim();
+        if (houseIdStr.isEmpty()) {
+            Toast.makeText(this, "Please enter House ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        int houseId;
+        try {
+            houseId = Integer.parseInt(houseIdStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Invalid House ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (!password.equals(confirmPassword)) {
             Toast.makeText(this, "Password mismatch", Toast.LENGTH_SHORT).show();
@@ -185,7 +193,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         // Register using the URL of the image
-        SignupRequest signupRequest = new SignupRequest(username, password, email, Integer.parseInt(houseId), role, imageUrl);
+        SignupRequest signupRequest = new SignupRequest(username, password, email, houseId, role, imageUrl);
 
         apiService.registerUser(signupRequest).enqueue(new Callback<ResponseBody>() {
             @Override
@@ -215,7 +223,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(RegisterActivity.this, "registered successfully\n", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Registered successfully", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                     startActivity(intent);

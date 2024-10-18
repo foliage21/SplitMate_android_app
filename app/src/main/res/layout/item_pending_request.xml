@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/striped_background"
+    android:padding="16dp"
+    android:layout_marginBottom="16dp">
+
+    <TextView
+        android:id="@+id/tvRequestInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tenant X requested Device Y"
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnApprove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Approve"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:textColor="@android:color/white"
+            android:layout_marginRight="16dp" />
+
+        <Button
+            android:id="@+id/btnDeny"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Deny"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+</LinearLayout>

@@ -9,7 +9,6 @@ public class SignupRequest {
     private String role;
     private String image;
 
-    // 构造函数包括所有字段
     public SignupRequest(String name, String password, String email, int houseId, String role, String image) {
         this.name = name;
         this.password = password;
@@ -19,7 +18,6 @@ public class SignupRequest {
         this.image = image;
     }
 
-    // Getter 和 Setter 方法
     public String getName() {
         return name;
     }

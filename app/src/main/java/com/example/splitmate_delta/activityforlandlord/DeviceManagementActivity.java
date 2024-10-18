@@ -1,78 +1,81 @@
 package com.example.splitmate_delta.activityforlandlord;
 
 import android.os.Bundle;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.example.splitmate_delta.R;
-import com.example.splitmate_delta.fragment.AddPiDialogFragment;
-import com.example.splitmate_delta.fragment.ManagePiFragment;
-import com.example.splitmate_delta.fragment.AddDeviceFragment;
-import com.example.splitmate_delta.fragment.ManageDeviceFragment;
+import com.example.splitmate_delta.api.BackendApiService;
+import com.example.splitmate_delta.api.ApiClient;
+import com.example.splitmate_delta.models.pi.AssignDeviceRequest;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DeviceManagementActivity extends AppCompatActivity {
 
-    private Button addPiButton;
-    private Button managePiButton;
-    private Button addDeviceButton;
-    private Button manageDeviceButton;
+    private EditText uidEditText;
+    private EditText houseIdEditText;
+    private Button assignDeviceButton;
+    private BackendApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_device_management);
 
-        addPiButton = findViewById(R.id.launchAddPiDialogButton);
-        managePiButton = findViewById(R.id.managePiButton);
-        addDeviceButton = findViewById(R.id.launchAddDeviceFragmentButton);
-        manageDeviceButton = findViewById(R.id.manageDeviceButton);
+        uidEditText = findViewById(R.id.uidEditText);
+        houseIdEditText = findViewById(R.id.houseIdEditText);
+        assignDeviceButton = findViewById(R.id.assignDeviceButton);
 
-        setupListeners();
+        apiService = ApiClient.getClient().create(BackendApiService.class);
+
+        assignDeviceButton.setOnClickListener(view -> {
+            String uid = uidEditText.getText().toString().trim();
+            String houseIdStr = houseIdEditText.getText().toString().trim();
+
+            if (uid.isEmpty() || houseIdStr.isEmpty()) {
+                Toast.makeText(DeviceManagementActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                int houseId = Integer.parseInt(houseIdStr);
+
+                AssignDeviceRequest request = new AssignDeviceRequest(uid, houseId);
+
+                assignDeviceToHouse(request);
+            } catch (NumberFormatException e) {
+                Toast.makeText(DeviceManagementActivity.this, "The house ID needs to be a number", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void setupListeners() {
-
-        addPiButton.setOnClickListener(new View.OnClickListener() {
+    // API
+    private void assignDeviceToHouse(AssignDeviceRequest request) {
+        Call<Void> call = apiService.assignDeviceToHouse(request);
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onClick(View v) {
-                DialogFragment addPiDialogFragment = new AddPiDialogFragment();
-                addPiDialogFragment.show(getSupportFragmentManager(), "AddPiDialogFragment");
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    // Request successful
+                    Toast.makeText(DeviceManagementActivity.this, "Device assigned successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Request failed, show status code
+                    int statusCode = response.code();
+                    Toast.makeText(DeviceManagementActivity.this, "Failed to assign device: " + statusCode, Toast.LENGTH_SHORT).show();
+                }
             }
-        });
 
-        managePiButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                ManagePiFragment managePiFragment = new ManagePiFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, managePiFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
-
-        addDeviceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AddDeviceFragment addDeviceFragment = new AddDeviceFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, addDeviceFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
-            }
-        });
-
-        manageDeviceButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ManageDeviceFragment manageDeviceFragment = new ManageDeviceFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, manageDeviceFragment);
-                transaction.addToBackStack(null);
-                transaction.commit();
+            public void onFailure(Call<Void> call, Throwable t) {
+                // Network error or other issues
+                Toast.makeText(DeviceManagementActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -8,16 +8,22 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.example.splitmate_delta.R;
 import com.example.splitmate_delta.api.ApiClient;
 import com.example.splitmate_delta.api.BackendApiService;
 import com.example.splitmate_delta.models.User;
 import com.example.splitmate_delta.models.bills.BillByUserId;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,8 +35,11 @@ public class LandlordBillsFragment extends Fragment {
     private ArrayList<String> tenantList = new ArrayList<>();
     private ArrayList<String> tenantIdList = new ArrayList<>();
     private BackendApiService apiService;
-    private int selectedHouseId = 1;
+    private int selectedHouseId;
     private TextView mWaterBill, mElectricityBill, mInternetBill, mGasBill;
+
+    private List<String> houseIdList = new ArrayList<>();
+    private List<User> allUsers = new ArrayList<>();
 
     @Nullable
     @Override
@@ -47,17 +56,11 @@ public class LandlordBillsFragment extends Fragment {
         mInternetBill = view.findViewById(R.id.internetBill);
         mGasBill = view.findViewById(R.id.gasBill);
 
-        // Set Property AutoComplete adapter
-        ArrayAdapter<CharSequence> propertyAdapter = ArrayAdapter.createFromResource(
-                requireContext(),
-                R.array.houseId_options,  // houseId options from strings.xml
-                android.R.layout.simple_dropdown_item_1line
-        );
-        propertyAutoComplete.setAdapter(propertyAdapter);
-
         propertyAutoComplete.setOnClickListener(v -> propertyAutoComplete.showDropDown());
-
         tenantAutoComplete.setOnClickListener(v -> tenantAutoComplete.showDropDown());
+
+        // Load all users and populate the property list
+        loadAllUsersAndPopulateProperties();
 
         // Listen for Property selection
         propertyAutoComplete.setOnItemClickListener((parent, view1, position, id) -> {
@@ -79,41 +82,71 @@ public class LandlordBillsFragment extends Fragment {
         return view;
     }
 
-    // Load tenant list for a given house ID
-    private void loadTenantList(int houseId) {
+    // Load all users and extract a unique list of house IDs
+    private void loadAllUsersAndPopulateProperties() {
         apiService.getAllUsers().enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    tenantList.clear();
-                    tenantIdList.clear();
+                    allUsers = response.body();
 
-                    for (User user : response.body()) {
-                        if ("tenant".equalsIgnoreCase(user.getRole()) && user.getHouseId() == houseId) {
-                            tenantList.add(user.getName());
-                            tenantIdList.add(String.valueOf(user.getId()));
-                        }
+                    // Extract unique house IDs
+                    Set<Integer> houseIdSet = new HashSet<>();
+                    for (User user : allUsers) {
+                        houseIdSet.add(user.getHouseId());
                     }
 
-                    if (tenantList.isEmpty()) {
-                        Toast.makeText(getContext(), "No tenants found for this property.", Toast.LENGTH_SHORT).show();
-                        tenantAutoComplete.setAdapter(null);
+                    // Convert house IDs to a list of strings
+                    houseIdList = new ArrayList<>();
+                    for (Integer houseId : houseIdSet) {
+                        houseIdList.add(String.valueOf(houseId));
+                    }
+
+                    if (houseIdList.isEmpty()) {
+                        Toast.makeText(getContext(), "No properties found.", Toast.LENGTH_SHORT).show();
                     } else {
-                        tenantAdapter = new ArrayAdapter<>(requireContext(),
-                                android.R.layout.simple_dropdown_item_1line, tenantList);
-                        tenantAutoComplete.setAdapter(tenantAdapter);
-                        tenantAutoComplete.showDropDown();
+                        // Set the adapter for the property selection box using the house ID list
+                        ArrayAdapter<String> propertyAdapter = new ArrayAdapter<>(
+                                requireContext(),
+                                android.R.layout.simple_dropdown_item_1line,
+                                houseIdList
+                        );
+                        propertyAutoComplete.setAdapter(propertyAdapter);
                     }
+
                 } else {
-                    Toast.makeText(getContext(), "Failed to load tenants", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Failed to load properties", Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
-                Toast.makeText(getContext(), "Error loading tenants", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Error loading properties", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    // Load the list of tenants for a given house ID
+    private void loadTenantList(int houseId) {
+        tenantList.clear();
+        tenantIdList.clear();
+
+        for (User user : allUsers) {
+            if ("tenant".equalsIgnoreCase(user.getRole()) && user.getHouseId() == houseId) {
+                tenantList.add(user.getName());
+                tenantIdList.add(String.valueOf(user.getId()));
+            }
+        }
+
+        if (tenantList.isEmpty()) {
+            Toast.makeText(getContext(), "No tenants found for this property.", Toast.LENGTH_SHORT).show();
+            tenantAutoComplete.setAdapter(null);
+        } else {
+            tenantAdapter = new ArrayAdapter<>(requireContext(),
+                    android.R.layout.simple_dropdown_item_1line, tenantList);
+            tenantAutoComplete.setAdapter(tenantAdapter);
+            tenantAutoComplete.showDropDown();
+        }
     }
 
     // Load bills for a given tenant ID

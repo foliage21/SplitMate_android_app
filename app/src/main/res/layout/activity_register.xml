@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
         <TextView
+            android:id="@+id/tv_register_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register"
@@ -29,7 +33,7 @@
             android:maxLines="1"
             android:inputType="textEmailAddress"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:id="@+id/et_register_user"
@@ -41,7 +45,7 @@
             android:maxLines="1"
             android:inputType="text"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:id="@+id/et_register_password"
@@ -53,7 +57,7 @@
             android:maxLines="1"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal" />
 
         <EditText
             android:id="@+id/et_register_confirm_password"
@@ -65,7 +69,7 @@
             android:maxLines="1"
             android:layout_marginTop="10dp"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal" />
 
         <RadioGroup
             android:id="@+id/rg_role"
@@ -92,13 +96,17 @@
                 android:layout_marginStart="20dp" />
         </RadioGroup>
 
-        <Spinner
-            android:id="@+id/spinner_houseId"
-            android:layout_width="match_parent"
+        <EditText
+            android:id="@+id/et_register_houseId"
+            android:layout_width="300dp"
             android:layout_height="50dp"
+            android:hint="House ID"
+            android:textSize="16sp"
             android:layout_marginTop="15dp"
-            android:entries="@array/houseId_options"
-            android:spinnerMode="dropdown" />
+            android:maxLines="1"
+            android:inputType="number"
+            android:background="@drawable/rounded_edittext"
+            android:layout_gravity="center_horizontal" />
 
         <Button
             android:id="@+id/btn_upload_photo"
@@ -128,7 +136,7 @@
             android:maxLines="1"
             android:inputType="text"
             android:background="@drawable/rounded_edittext"
-            android:layout_gravity="center" />
+            android:layout_gravity="center_horizontal" />
 
         <Button
             android:id="@+id/btn_confirm_signup"
