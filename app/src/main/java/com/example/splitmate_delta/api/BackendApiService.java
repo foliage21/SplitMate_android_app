@@ -2,6 +2,7 @@ package com.example.splitmate_delta.api;
 
 import com.example.splitmate_delta.models.User;
 import com.example.splitmate_delta.models.bills.BillByUserId;
+import com.example.splitmate_delta.models.bills.DownloadBillResponse;
 import com.example.splitmate_delta.models.ble.DeviceStatusUpdate;
 import com.example.splitmate_delta.models.permissions.ApproveOrRejectRequest;
 import com.example.splitmate_delta.models.permissions.PendingRequest;
@@ -73,4 +74,7 @@ public interface BackendApiService {
 
     @POST("/frontend/assignDeviceToHouse")
     Call<Void> assignDeviceToHouse(@Body AssignDeviceRequest request);
+
+    @GET("bill/generateBillPdf/{userId}")
+    Call<DownloadBillResponse> generateBillPdf(@Path("userId") int userId);
     }

@@ -1,82 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- 根部的ScrollView用于适配小屏幕设备 -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
     android:background="@drawable/background2">
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:rowCount="2"
-        android:columnCount="2"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
-
-        <Button
-            android:id="@+id/CurrentPermissions"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_row="0"
-            android:layout_column="0"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:text="Current Permissions"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:padding="16dp"
-            android:gravity="center" />
-
-        <Button
-            android:id="@+id/UsageRecords"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_row="0"
-            android:layout_column="1"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:text="Usage Records"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:padding="16dp"
-            android:gravity="center" />
-
-        <Button
-            android:id="@+id/RequestAccessPermissions"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_row="1"
-            android:layout_column="0"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:text="Request Access Permissions"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:padding="16dp"
-            android:gravity="center" />
-
-        <Button
-            android:id="@+id/btn_control_device"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_row="1"
-            android:layout_column="1"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:text="Control Device (TV)"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:padding="16dp"
-            android:gravity="center" />
-
-    </GridLayout>
-
     <LinearLayout
+        android:id="@+id/mainLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/CurrentPermissionsCard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/CurrentPermissionsImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80000000" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:layout_margin="16dp"
+                    android:layout_gravity="top|start"
+                    android:background="@drawable/rounded_corner_bg">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/rule_24px"
+                        app:tint="@android:color/black"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/CurrentPermissionsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current Permissions"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:fontFamily="@font/note1" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/UsageRecordsCard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/UsageRecordsImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80000000" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:layout_margin="16dp"
+                    android:layout_gravity="top|start"
+                    android:background="@drawable/rounded_corner_bg">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/receipt_long_24px"
+                        app:tint="@android:color/black"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/UsageRecordsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Usage Records"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:fontFamily="@font/note1" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/RequestAccessPermissionsCard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/RequestAccessPermissionsImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80000000" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:layout_margin="16dp"
+                    android:layout_gravity="top|start"
+                    android:background="@drawable/rounded_corner_bg">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/report_24px"
+                        app:tint="@android:color/black"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/RequestAccessPermissionsText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Request Access Permissions"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:fontFamily="@font/note1" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/ControlDeviceCard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:clickable="true"
+            android:foreground="?attr/selectableItemBackground"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/ControlDeviceImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="285dp"
+                    android:background="#80000000" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:layout_margin="16dp"
+                    android:layout_gravity="top|start"
+                    android:background="@drawable/rounded_corner_bg">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/nest_remote_comfort_sensor_24px"
+                        app:tint="@android:color/black"
+                        android:layout_marginEnd="8dp" />
+
+                    <TextView
+                        android:id="@+id/ControlDeviceText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Control Device"
+                        android:textSize="18sp"
+                        android:textColor="@android:color/black"
+                        android:fontFamily="@font/note1" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

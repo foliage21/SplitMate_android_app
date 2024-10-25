@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+// Import necessary classes
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+// Import Material Components
+import com.google.android.material.card.MaterialCardView;
 import androidx.fragment.app.Fragment;
 
 import com.example.splitmate_delta.R;
@@ -37,6 +40,9 @@ public class LandlordBillsFragment extends Fragment {
     private BackendApiService apiService;
     private int selectedHouseId;
     private TextView mWaterBill, mElectricityBill, mInternetBill, mGasBill;
+    private TextView mTotalBill, mDueDate;
+    private double totalAmount = 0;
+    private String dueDate = "";
 
     private List<String> houseIdList = new ArrayList<>();
     private List<User> allUsers = new ArrayList<>();
@@ -55,6 +61,8 @@ public class LandlordBillsFragment extends Fragment {
         mElectricityBill = view.findViewById(R.id.electricityBill);
         mInternetBill = view.findViewById(R.id.internetBill);
         mGasBill = view.findViewById(R.id.gasBill);
+        mTotalBill = view.findViewById(R.id.totalBill);
+        mDueDate = view.findViewById(R.id.dueDate);
 
         propertyAutoComplete.setOnClickListener(v -> propertyAutoComplete.showDropDown());
         tenantAutoComplete.setOnClickListener(v -> tenantAutoComplete.showDropDown());
@@ -175,9 +183,14 @@ public class LandlordBillsFragment extends Fragment {
         mElectricityBill.setText("Electricity Bill: $0.00");
         mInternetBill.setText("Internet Bill: $0.00");
         mGasBill.setText("Gas Bill: $0.00");
+        totalAmount = 0;
+        dueDate = "";
 
         if (bills.isEmpty()) {
             Toast.makeText(getContext(), "No bills found for this tenant.", Toast.LENGTH_SHORT).show();
+            // Clear total bill and due date
+            mTotalBill.setText("Total Bill: $0.00");
+            mDueDate.setText("Due Date: N/A");
             return;
         }
 
@@ -194,6 +207,15 @@ public class LandlordBillsFragment extends Fragment {
             } else if (billName.contains("gas")) {
                 mGasBill.setText("Gas Bill: " + amountText);
             }
+            // Sum up the total amount
+            totalAmount += bill.getAmount();
+            // Get the due date from one of the bills
+            if (dueDate.isEmpty()) {
+                dueDate = bill.getDueDate();
+            }
         }
+
+        mTotalBill.setText("Total Bill: $" + String.format("%.2f", totalAmount));
+        mDueDate.setText("Due Date: " + dueDate);
     }
 }

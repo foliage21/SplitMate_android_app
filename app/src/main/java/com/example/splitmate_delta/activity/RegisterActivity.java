@@ -1,8 +1,10 @@
 package com.example.splitmate_delta.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.CountDownTimer; // Import CountDownTimer
 import android.provider.MediaStore;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private BackendApiService apiService;
     private S3UploadUtils s3UploadUtils;
+    private CountDownTimer countDownTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         apiService = ApiClient.getApiService();
-        s3UploadUtils = new S3UploadUtils(apiService); // S3UploadUtils
+        s3UploadUtils = new S3UploadUtils(apiService);
 
         mEtEmail = findViewById(R.id.et_register_email);
         mEtUsername = findViewById(R.id.et_register_user);
@@ -69,6 +72,21 @@ public class RegisterActivity extends AppCompatActivity {
             } else {
                 registerUser(null); // Sign up directly when there is no video
             }
+
+            // Disable the button and start countdown timer
+            mBtnRegister.setEnabled(false);
+            countDownTimer = new CountDownTimer(30000, 1000) { // 30-second countdown
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    mBtnRegister.setText("Please wait (" + millisUntilFinished / 1000 + "s)");
+                }
+
+                @Override
+                public void onFinish() {
+                    mBtnRegister.setText("Get Verification Code");
+                    mBtnRegister.setEnabled(true);
+                }
+            }.start();
         });
 
         // Confirm registration button recognition
@@ -79,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void showVideoSelectionDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select a video source");
-        builder.setItems(new CharSequence[]{"shoot a video", "upload a video"}, (dialog, which) -> {
+        builder.setItems(new CharSequence[]{"Shoot a video", "Upload a video"}, (dialog, which) -> {
             if (which == 0) {
                 openCameraForVideo();
             } else {
@@ -105,27 +123,27 @@ public class RegisterActivity extends AppCompatActivity {
         pickVideoLauncher.launch(intent);
     }
 
-    // shoot ActivityResultLauncher
+    // Shoot ActivityResultLauncher
     private final ActivityResultLauncher<Intent> captureVideoLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             Uri videoUri = result.getData().getData();
                             mVideoUri = videoUri; // URI
-                            Toast.makeText(this, "Successful video shooting", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Video captured successfully", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(RegisterActivity.this, "Video shooting failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Video capture failed", Toast.LENGTH_SHORT).show();
                         }
                     });
 
-    // select ActivityResultLauncher
+    // Select ActivityResultLauncher
     private final ActivityResultLauncher<Intent> pickVideoLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                             Uri videoUri = result.getData().getData();
                             mVideoUri = videoUri; // URI
-                            Toast.makeText(this, "Video selection successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Video selected successfully", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(RegisterActivity.this, "Video selection failed", Toast.LENGTH_SHORT).show();
                         }
@@ -134,7 +152,7 @@ public class RegisterActivity extends AppCompatActivity {
     // Process the video and upload it
     private void processVideoAndUpload(Uri videoUri) {
         // Extract frames from the video
-        List<android.graphics.Bitmap> frames = VideoUtils.extractFramesFromVideo(this, videoUri, 30);
+        List<Bitmap> frames = VideoUtils.extractFramesFromVideo(this, videoUri, 30);
 
         if (frames == null || frames.isEmpty()) {
             Toast.makeText(this, "Failed to extract any frames", Toast.LENGTH_SHORT).show();
@@ -151,7 +169,7 @@ public class RegisterActivity extends AppCompatActivity {
                         String imageUrl = photoUrls.get(photoUrls.size() - 1);
                         registerUser(imageUrl);
                     } else {
-                        Toast.makeText(RegisterActivity.this, "No successfully uploaded images", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegisterActivity.this, "No images uploaded successfully", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -188,7 +206,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Password mismatch", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -202,12 +220,24 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(RegisterActivity.this, "Verification code sent to email", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(RegisterActivity.this, "Registration failed", Toast.LENGTH_SHORT).show();
+                    // Re-enable the button if registration fails
+                    if (countDownTimer != null) {
+                        countDownTimer.cancel();
+                        mBtnRegister.setText("Get Verification Code");
+                        mBtnRegister.setEnabled(true);
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(RegisterActivity.this, "Registration error", Toast.LENGTH_SHORT).show();
+                // Re-enable the button if registration fails
+                if (countDownTimer != null) {
+                    countDownTimer.cancel();
+                    mBtnRegister.setText("Get Verification Code");
+                    mBtnRegister.setEnabled(true);
+                }
             }
         });
     }
@@ -230,14 +260,22 @@ public class RegisterActivity extends AppCompatActivity {
                     finish();
 
                 } else {
-                    Toast.makeText(RegisterActivity.this, "Confirm registration failure", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "Confirmation failed", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(RegisterActivity.this, "Confirm registration error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegisterActivity.this, "Confirmation error", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
     }
 }

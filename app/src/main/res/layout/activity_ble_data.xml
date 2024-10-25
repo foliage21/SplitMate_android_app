@@ -1,71 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background2"
     android:padding="16dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/device1Name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TV"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
-            android:textColor="@android:color/black" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/device1StatusIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_ble"
-                    android:layout_marginEnd="16dp" />
-
-                <TextView
-                    android:id="@+id/device1StatusTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Device status: Not connected"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        <!-- Device 1 Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
             app:cardElevation="8dp"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:padding="16dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <!-- Device Name and Switch -->
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/tv_24px"
+                        android:layout_marginEnd="16dp" />
+
+                    <TextView
+                        android:id="@+id/device1Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TV"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/device1Switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- Device Status -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:id="@+id/device1StatusIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_ble"
+                        android:layout_marginEnd="16dp" />
+
+                    <TextView
+                        android:id="@+id/device1StatusTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Device status: Not connected"
+                        android:textSize="20sp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+                <!-- Device Information -->
                 <TextView
                     android:id="@+id/device1LastOperationTimeTextView"
                     android:layout_width="wrap_content"
@@ -91,97 +107,77 @@
                     android:text="Total usage time: None"
                     android:textSize="18sp"
                     android:textColor="@android:color/black" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp">
-
-            <Button
-                android:id="@+id/device1TurnOnButton"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:text="On"
-                android:textColor="@android:color/white"
-                android:background="@drawable/btn_on_shape"
-                android:layout_marginEnd="16dp"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/device1TurnOffButton"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:text="Off"
-                android:textColor="@android:color/white"
-                android:background="@drawable/btn_off_shape"
-                android:textSize="16sp" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
-            android:layout_marginBottom="16dp" />
-
-        <TextView
-            android:id="@+id/device2Name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Microwave"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
-            android:textColor="@android:color/black" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="16dp">
-
-                <ImageView
-                    android:id="@+id/device2StatusIcon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_ble"
-                    android:layout_marginEnd="16dp" />
-
-                <TextView
-                    android:id="@+id/device2StatusTextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Device status: Not connected"
-                    android:textSize="20sp"
-                    android:textColor="@android:color/black" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        <!-- Device 2 Card -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardCornerRadius="12dp"
             app:cardElevation="8dp"
-            android:layout_marginBottom="16dp">
+            android:padding="16dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+                <!-- Device Name and Switch -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/microwave_24px"
+                        android:layout_marginEnd="16dp" />
+
+                    <TextView
+                        android:id="@+id/device2Name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Microwave"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/device2Switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <!-- Device Status -->
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:id="@+id/device2StatusIcon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_ble"
+                        android:layout_marginEnd="16dp" />
+
+                    <TextView
+                        android:id="@+id/device2StatusTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Device status: Not connected"
+                        android:textSize="20sp"
+                        android:textColor="@android:color/black" />
+                </LinearLayout>
+
+                <!-- Device Information -->
                 <TextView
                     android:id="@+id/device2LastOperationTimeTextView"
                     android:layout_width="wrap_content"
@@ -207,35 +203,9 @@
                     android:text="Total usage time: None"
                     android:textSize="18sp"
                     android:textColor="@android:color/black" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="8dp">
-
-            <Button
-                android:id="@+id/device2TurnOnButton"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:text="On"
-                android:textColor="@android:color/white"
-                android:background="@drawable/btn_on_shape"
-                android:layout_marginEnd="16dp"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/device2TurnOffButton"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:text="Off"
-                android:textColor="@android:color/white"
-                android:background="@drawable/btn_off_shape"
-                android:textSize="16sp" />
-        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

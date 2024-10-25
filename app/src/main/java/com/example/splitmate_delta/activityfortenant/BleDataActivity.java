@@ -14,12 +14,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -42,7 +42,7 @@ import retrofit2.Response;
 public class BleDataActivity extends AppCompatActivity {
 
     private static final String MAC_ADDRESS_DEVICE1 = "F2:41:15:61:63:3E"; // TV
-    private static final String MAC_ADDRESS_DEVICE2 = "C1:1A:52:E5:40:C3"; // Microwave
+    private static final String MAC_ADDRESS_DEVICE2 = "C3:8A:52:E5:40:C0"; // Microwave
 
     private BluetoothLeScanner bluetoothLeScanner;
     private Map<String, BluetoothGatt> bluetoothGattMap = new HashMap<>();
@@ -50,11 +50,11 @@ public class BleDataActivity extends AppCompatActivity {
 
     private TextView device1StatusTextView, device1LastOperationTimeTextView, device1LastOperationTypeTextView, device1TotalUsageTimeTextView;
     private ImageView device1StatusIcon;
-    private Button device1TurnOnButton, device1TurnOffButton;
+    private SwitchCompat device1Switch;
 
     private TextView device2StatusTextView, device2LastOperationTimeTextView, device2LastOperationTypeTextView, device2TotalUsageTimeTextView;
     private ImageView device2StatusIcon;
-    private Button device2TurnOnButton, device2TurnOffButton;
+    private SwitchCompat device2Switch;
 
     private String userId;
 
@@ -93,8 +93,7 @@ public class BleDataActivity extends AppCompatActivity {
         device1LastOperationTypeTextView = findViewById(R.id.device1LastOperationTypeTextView);
         device1TotalUsageTimeTextView = findViewById(R.id.device1TotalUsageTimeTextView);
         device1StatusIcon = findViewById(R.id.device1StatusIcon);
-        device1TurnOnButton = findViewById(R.id.device1TurnOnButton);
-        device1TurnOffButton = findViewById(R.id.device1TurnOffButton);
+        device1Switch = findViewById(R.id.device1Switch);
 
         // Initialize components for device 2
         device2StatusTextView = findViewById(R.id.device2StatusTextView);
@@ -102,27 +101,26 @@ public class BleDataActivity extends AppCompatActivity {
         device2LastOperationTypeTextView = findViewById(R.id.device2LastOperationTypeTextView);
         device2TotalUsageTimeTextView = findViewById(R.id.device2TotalUsageTimeTextView);
         device2StatusIcon = findViewById(R.id.device2StatusIcon);
-        device2TurnOnButton = findViewById(R.id.device2TurnOnButton);
-        device2TurnOffButton = findViewById(R.id.device2TurnOffButton);
+        device2Switch = findViewById(R.id.device2Switch);
 
-        // Set listeners for device 1 buttons
-        device1TurnOnButton.setOnClickListener(v -> {
+        // Set listeners for device 1 switch
+        device1Switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             requestedDeviceMacAddress = MAC_ADDRESS_DEVICE1;
-            checkPermissionsAndScan();
+            if (isChecked) {
+                checkPermissionsAndScan();
+            } else {
+                disconnectFromDevice(MAC_ADDRESS_DEVICE1);
+            }
         });
 
-        device1TurnOffButton.setOnClickListener(v -> {
-            disconnectFromDevice(MAC_ADDRESS_DEVICE1);
-        });
-
-        // Set listeners for device 2 buttons
-        device2TurnOnButton.setOnClickListener(v -> {
+        // Set listeners for device 2 switch
+        device2Switch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             requestedDeviceMacAddress = MAC_ADDRESS_DEVICE2;
-            checkPermissionsAndScan();
-        });
-
-        device2TurnOffButton.setOnClickListener(v -> {
-            disconnectFromDevice(MAC_ADDRESS_DEVICE2);
+            if (isChecked) {
+                checkPermissionsAndScan();
+            } else {
+                disconnectFromDevice(MAC_ADDRESS_DEVICE2);
+            }
         });
     }
 
@@ -171,9 +169,14 @@ public class BleDataActivity extends AppCompatActivity {
                 String formattedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(timestamp));
                 DeviceStatusUpdate statusUpdate = new DeviceStatusUpdate(userId, macAddress, "off", formattedTime);
                 sendDeviceStatusUpdate(statusUpdate);
+
+                // Update the switch state without triggering the listener
+                updateSwitchState(macAddress, false);
             });
         } else {
             showToast("No device to disconnect");
+            // Ensure the switch reflects the disconnected state
+            updateSwitchState(macAddress, false);
         }
     }
 
@@ -189,6 +192,37 @@ public class BleDataActivity extends AppCompatActivity {
         statusIcon.setColorFilter(ContextCompat.getColor(BleDataActivity.this, colorResId), android.graphics.PorterDuff.Mode.SRC_IN);
         lastOperationTimeTextView.setText("Last operation time: " + formattedTime);
         lastOperationTypeTextView.setText("Last operation type: " + operationType);
+
+        // Update the switch state without triggering the listener
+        boolean isOn = operationType.equals("Turned on");
+        updateSwitchState(macAddress, isOn);
+    }
+
+    // Update the switch state
+    private void updateSwitchState(String macAddress, boolean isChecked) {
+        if (macAddress.equals(MAC_ADDRESS_DEVICE1)) {
+            device1Switch.setOnCheckedChangeListener(null);
+            device1Switch.setChecked(isChecked);
+            device1Switch.setOnCheckedChangeListener((buttonView, isOn) -> {
+                requestedDeviceMacAddress = MAC_ADDRESS_DEVICE1;
+                if (isOn) {
+                    checkPermissionsAndScan();
+                } else {
+                    disconnectFromDevice(MAC_ADDRESS_DEVICE1);
+                }
+            });
+        } else if (macAddress.equals(MAC_ADDRESS_DEVICE2)) {
+            device2Switch.setOnCheckedChangeListener(null);
+            device2Switch.setChecked(isChecked);
+            device2Switch.setOnCheckedChangeListener((buttonView, isOn) -> {
+                requestedDeviceMacAddress = MAC_ADDRESS_DEVICE2;
+                if (isOn) {
+                    checkPermissionsAndScan();
+                } else {
+                    disconnectFromDevice(MAC_ADDRESS_DEVICE2);
+                }
+            });
+        }
     }
 
     // Get the corresponding TextView and ImageView
@@ -254,16 +288,20 @@ public class BleDataActivity extends AppCompatActivity {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    showToast("Device status updated successfully");
-                } else {
-                    showToast("Failed to update device status: " + response.code());
+                if (!BleDataActivity.this.isFinishing()) {
+                    if (response.isSuccessful()) {
+                        showToast("Device status updated successfully");
+                    } else {
+                        showToast("Failed to update device status: " + response.code());
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                showToast("Error updating device status: " + t.getMessage());
+                if (!BleDataActivity.this.isFinishing()) {
+                    showToast("Error updating device status: " + t.getMessage());
+                }
             }
         });
     }
@@ -325,6 +363,9 @@ public class BleDataActivity extends AppCompatActivity {
                 String formattedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(timestamp));
                 DeviceStatusUpdate statusUpdate = new DeviceStatusUpdate(userId, macAddress, state, formattedTime);
                 sendDeviceStatusUpdate(statusUpdate);
+
+                // Update the switch state without triggering the listener
+                updateSwitchState(macAddress, state.equals("on"));
             });
         }
 

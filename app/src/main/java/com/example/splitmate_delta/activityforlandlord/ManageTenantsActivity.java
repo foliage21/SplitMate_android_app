@@ -11,7 +11,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +28,9 @@ import com.example.splitmate_delta.models.signup.ConfirmSignupRequest;
 import com.example.splitmate_delta.models.signup.SignupRequest;
 import com.example.splitmate_delta.utils.S3UploadUtils;
 import com.example.splitmate_delta.utils.VideoUtils;
+import com.google.android.material.textfield.TextInputLayout;
+
+import android.widget.AutoCompleteTextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ public class ManageTenantsActivity extends AppCompatActivity {
 
     private ListView tenantListView;
     private Button addTenantButton;
-    private Spinner propertySpinner;
+    private AutoCompleteTextView propertyAutoCompleteTextView;
     private BackendApiService apiService;
     private TenantListAdapter adapter;
     private ArrayList<String> tenantList = new ArrayList<>();
@@ -74,18 +76,18 @@ public class ManageTenantsActivity extends AppCompatActivity {
 
         tenantListView = findViewById(R.id.tenantListView);
         addTenantButton = findViewById(R.id.addTenantButton);
-        propertySpinner = findViewById(R.id.spinnerPropertySelection);
+        propertyAutoCompleteTextView = findViewById(R.id.autoCompletePropertySelection);
 
         adapter = new TenantListAdapter();
         tenantListView.setAdapter(adapter);
 
-        // Load all users and populate property spinner
+        // Load all users and populate property list
         loadAllUsersAndPopulateProperties();
 
-        // Listen for the Spinner selection
-        propertySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Set listener for AutoCompleteTextView selection
+        propertyAutoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view1, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view1, int position, long id) {
                 String selectedItem = parent.getItemAtPosition(position).toString();
                 try {
                     selectedHouseId = Integer.parseInt(selectedItem);
@@ -93,11 +95,6 @@ public class ManageTenantsActivity extends AppCompatActivity {
                 } catch (NumberFormatException e) {
                     Toast.makeText(ManageTenantsActivity.this, "Invalid property selected.", Toast.LENGTH_SHORT).show();
                 }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                selectedHouseId = -1;
             }
         });
 
@@ -129,14 +126,13 @@ public class ManageTenantsActivity extends AppCompatActivity {
                     if (houseIdList.isEmpty()) {
                         Toast.makeText(ManageTenantsActivity.this, "No properties found.", Toast.LENGTH_SHORT).show();
                     } else {
-                        // Set up the Spinner adapter with dynamic house IDs
-                        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(
+                        // Set up the AutoCompleteTextView adapter with dynamic house IDs
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(
                                 ManageTenantsActivity.this,
-                                android.R.layout.simple_spinner_item,
+                                android.R.layout.simple_dropdown_item_1line,
                                 houseIdList
                         );
-                        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        propertySpinner.setAdapter(spinnerAdapter);
+                        propertyAutoCompleteTextView.setAdapter(adapter);
                     }
                 } else {
                     Toast.makeText(ManageTenantsActivity.this, "Failed to load properties", Toast.LENGTH_LONG).show();

@@ -6,7 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -19,61 +20,46 @@ import com.example.splitmate_delta.activityfortenant.BleDataActivity;
 import com.example.splitmate_delta.activityfortenant.CurrentPermissionsActivity;
 import com.example.splitmate_delta.activityfortenant.UsageRecordsActivity;
 import com.example.splitmate_delta.activityfortenant.RequestAccessPermissionsActivity;
+import com.google.android.material.card.MaterialCardView;
 
 public class TenantDashboardFragment extends Fragment {
 
-    private Button mCurrentPermissions;
-    private Button mUsageRecords;
-    private Button mRequestAccessPermissions;
-    private Button mControlDevice;
+    private MaterialCardView mCurrentPermissionsCard;
+    private MaterialCardView mUsageRecordsCard;
+    private MaterialCardView mRequestAccessPermissionsCard;
+    private MaterialCardView mControlDeviceCard;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_tenant_dashboard, container, false);
 
-        mCurrentPermissions = view.findViewById(R.id.CurrentPermissions);
-        mUsageRecords = view.findViewById(R.id.UsageRecords);
-        mRequestAccessPermissions = view.findViewById(R.id.RequestAccessPermissions);
-        mControlDevice = view.findViewById(R.id.btn_control_device);
+        mCurrentPermissionsCard = view.findViewById(R.id.CurrentPermissionsCard);
+        mUsageRecordsCard = view.findViewById(R.id.UsageRecordsCard);
+        mRequestAccessPermissionsCard = view.findViewById(R.id.RequestAccessPermissionsCard);
+        mControlDeviceCard = view.findViewById(R.id.ControlDeviceCard);
 
-        mCurrentPermissions.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CurrentPermissionsActivity.class);
-            startActivity(intent);
-        });
+        mCurrentPermissionsCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), CurrentPermissionsActivity.class)));
+        mUsageRecordsCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), UsageRecordsActivity.class)));
+        mRequestAccessPermissionsCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), RequestAccessPermissionsActivity.class)));
+        mControlDeviceCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), BleDataActivity.class)));
 
-        mUsageRecords.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), UsageRecordsActivity.class);
-            startActivity(intent);
-        });
-
-        mRequestAccessPermissions.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), RequestAccessPermissionsActivity.class);
-            startActivity(intent);
-        });
-
-        mControlDevice.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), BleDataActivity.class);
-            startActivity(intent);
-        });
-
-        // Glide
-        loadImageForButton(mCurrentPermissions, "https://cdn.langeek.co/photo/48233/original/correct?type=jpeg");
-        loadImageForButton(mUsageRecords, "https://cdn.langeek.co/photo/48551/original/write?type=jpeg");
-        loadImageForButton(mRequestAccessPermissions, "https://cdn.langeek.co/photo/50683/original/hand?type=jpeg");
-        loadImageForButton(mControlDevice, "https://cdn.langeek.co/photo/49820/original/?type=jpeg");
+        loadImageForImageView(view, R.id.CurrentPermissionsImage, "https://cdn.langeek.co/photo/48233/original/correct?type=jpeg");
+        loadImageForImageView(view, R.id.UsageRecordsImage, "https://cdn.langeek.co/photo/48551/original/write?type=jpeg");
+        loadImageForImageView(view, R.id.RequestAccessPermissionsImage, "https://cdn.langeek.co/photo/50683/original/hand?type=jpeg");
+        loadImageForImageView(view, R.id.ControlDeviceImage, "https://cdn.langeek.co/photo/49820/original/?type=jpeg");
 
         return view;
     }
 
-    // Glide
-    private void loadImageForButton(Button button, String imageUrl) {
+    private void loadImageForImageView(View parentView, int imageViewId, String imageUrl) {
+        ImageView imageView = parentView.findViewById(imageViewId);
         Glide.with(this)
                 .load(imageUrl)
                 .into(new CustomTarget<Drawable>() {
                     @Override
                     public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                        button.setBackground(resource);
+                        imageView.setImageDrawable(resource);
                     }
 
                     @Override

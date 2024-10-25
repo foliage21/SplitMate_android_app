@@ -1,9 +1,12 @@
 package com.example.splitmate_delta.activityfortenant;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,7 +23,7 @@ import retrofit2.Response;
 
 public class RequestAccessPermissionsActivity extends AppCompatActivity {
 
-    private Button btnRequestTV, btnRequestMicrowave;
+    private Button btnRequestTV, btnRequestMicrowave, btnRequestOtherDevice;
     private BackendApiService apiService;
     private int userId;
 
@@ -32,6 +35,7 @@ public class RequestAccessPermissionsActivity extends AppCompatActivity {
         // Initialize UI components
         btnRequestTV = findViewById(R.id.request_tv);
         btnRequestMicrowave = findViewById(R.id.request_microwave);
+        btnRequestOtherDevice = findViewById(R.id.request_other_device);
 
         // Initialize API service
         apiService = ApiClient.getApiService();
@@ -58,12 +62,51 @@ public class RequestAccessPermissionsActivity extends AppCompatActivity {
         btnRequestMicrowave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String macAddress = "C3:8A:52:E5:40:C3"; // MAC address for the Microwave
+                String macAddress = "C3:8A:52:E5:40:C0"; // MAC address for the Microwave
                 requestPermission(userId, macAddress);
+            }
+        });
+
+        // Click listener for "Add Other Device" button
+        btnRequestOtherDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMacAddressInputDialog();
             }
         });
     }
 
+    // Method to show input dialog for MAC address
+    private void showMacAddressInputDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Other Device");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        input.setHint("Enter the device's MAC address");
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("Request Permission", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                String macAddress = input.getText().toString().trim();
+                if (!macAddress.isEmpty()) {
+                    requestPermission(userId, macAddress);
+                } else {
+                    Toast.makeText(RequestAccessPermissionsActivity.this, "MAC address cannot be empty", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        // Show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    // Method to request permission
     private void requestPermission(int userId, String macAddress) {
         PermissionRequest permissionRequest = new PermissionRequest(userId, macAddress);
 

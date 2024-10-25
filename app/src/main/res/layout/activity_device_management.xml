@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:padding="16dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -40,7 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Device UID"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="12dp" />
@@ -59,7 +60,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="House ID"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
                     android:layout_marginBottom="12dp" />
@@ -74,15 +75,21 @@
                     android:layout_marginBottom="16dp"
                     android:padding="10dp"/>
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/assignDeviceButton"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Assign Device to House"
-                    android:backgroundTint="@color/black"
+                    android:text="Assign"
+                    android:textSize="16sp"
                     android:textColor="@android:color/white"
-                    android:layout_marginTop="24dp"
-                    app:cornerRadius="8dp"/>
+                    app:backgroundTint="@color/black"
+                    app:cornerRadius="24dp"
+                    app:strokeColor="@android:color/white"
+                    app:strokeWidth="2dp"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="24dp"
+                    android:paddingEnd="24dp"/>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
