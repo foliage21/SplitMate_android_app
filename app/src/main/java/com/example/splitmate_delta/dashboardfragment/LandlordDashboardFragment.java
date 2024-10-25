@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.splitmate_delta.R;
-import com.example.splitmate_delta.activityforlandlord.DeviceManagementActivity;
+import com.example.splitmate_delta.activityforlandlord.PiManagementActivity;
 import com.example.splitmate_delta.activityforlandlord.ManagePermissionsActivity;
 import com.example.splitmate_delta.activityforlandlord.ManageTenantsActivity;
 import com.example.splitmate_delta.activityforlandlord.TenantUsageRecordsActivity;
@@ -43,7 +43,7 @@ public class LandlordDashboardFragment extends Fragment {
         mAddRemoveTenantCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), ManageTenantsActivity.class)));
         mTenantUsageRecordsCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), TenantUsageRecordsActivity.class)));
         mManagePermissionsCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), ManagePermissionsActivity.class)));
-        mDeviceManagementCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), DeviceManagementActivity.class)));
+        mDeviceManagementCard.setOnClickListener(v -> startActivity(new Intent(getActivity(), PiManagementActivity.class)));
 
         loadImageForImageView(view, R.id.AddRemoveTenantImage, "https://cdn.langeek.co/photo/22289/original/?type=jpeg");
         loadImageForImageView(view, R.id.TenantUsageRecordsImage, "https://cdn.langeek.co/photo/36257/original/?type=jpeg");

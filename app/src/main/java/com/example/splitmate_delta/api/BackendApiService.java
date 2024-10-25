@@ -23,6 +23,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -75,6 +76,13 @@ public interface BackendApiService {
     @POST("/frontend/assignDeviceToHouse")
     Call<Void> assignDeviceToHouse(@Body AssignDeviceRequest request);
 
-    @GET("bill/generateBillPdf/{userId}")
-    Call<DownloadBillResponse> generateBillPdf(@Path("userId") int userId);
+    @POST("bill/generateBillPdf/{userId}")
+    Call<DownloadBillResponse> generateBillPdf(
+            @Path("userId") int userId,
+            @Header("User-Agent") String userAgent,
+            @Header("Accept") String accept,
+            @Header("Cache-Control") String cacheControl,
+            @Header("Connection") String connection,
+            @Header("Content-Length") String contentLength
+    );
     }

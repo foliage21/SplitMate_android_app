@@ -1,5 +1,6 @@
 package com.example.splitmate_delta.billfragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,14 +15,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.example.splitmate_delta.models.bills.DownloadBillResponse;
 import androidx.fragment.app.Fragment;
 
 import com.example.splitmate_delta.R;
 import com.example.splitmate_delta.api.ApiClient;
 import com.example.splitmate_delta.api.BackendApiService;
 import com.example.splitmate_delta.models.bills.BillByUserId;
+import com.example.splitmate_delta.models.bills.DownloadBillResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -53,7 +55,6 @@ public class TenantBillsFragment extends Fragment {
 
         apiService = ApiClient.getApiService();
 
-        // Gets the current user ID
         int tenantId = getCurrentUserId();
         if (tenantId != -1) {
             loadBills(tenantId);
@@ -62,29 +63,24 @@ public class TenantBillsFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         }
 
-        mDownloadBillButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int tenantId = getCurrentUserId();
-                if (tenantId != -1) {
-                    downloadBill(tenantId);
-                } else {
-                    Toast.makeText(getContext(), "User not logged in. Please log in to download your bill.",
-                            Toast.LENGTH_SHORT).show();
-                }
+        mDownloadBillButton.setOnClickListener(v -> {
+            int tenantId1 = getCurrentUserId();
+            if (tenantId1 != -1) {
+                downloadBill(tenantId1);
+            } else {
+                Toast.makeText(getContext(), "User not logged in. Please log in to download your bill.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
 
         return view;
     }
 
-    // Get the user ID from SharedPreferences
     private int getCurrentUserId() {
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         return sharedPreferences.getInt("userId", -1);
     }
 
-    // Load bills from API
     private void loadBills(int tenantId) {
         Call<List<BillByUserId>> call = apiService.getBillsByUserId(tenantId);
         call.enqueue(new Callback<List<BillByUserId>>() {
@@ -103,10 +99,8 @@ public class TenantBillsFragment extends Fragment {
                         }
                     }
 
-                    // Total bill and due date
                     mTotalBill.setText("Total Bill: $" + String.format("%.2f", totalAmount));
                     mDueDate.setText("Due Date: " + dueDate);
-
                 } else {
                     Toast.makeText(getContext(), "Failed to load bills", Toast.LENGTH_SHORT).show();
                 }
@@ -119,7 +113,6 @@ public class TenantBillsFragment extends Fragment {
         });
     }
 
-    // Update the billing information and display the name
     private void updateBillText(BillByUserId bill) {
         switch (bill.getName().toLowerCase()) {
             case "water bill":
@@ -137,17 +130,26 @@ public class TenantBillsFragment extends Fragment {
         }
     }
 
-    // Download the bill PDF
     private void downloadBill(int tenantId) {
-        Call<DownloadBillResponse> call = apiService.generateBillPdf(tenantId);
+        Call<DownloadBillResponse> call = apiService.generateBillPdf(
+                tenantId,
+                "PostmanRuntime/7.42.0",
+                "*/*",
+                "no-cache",
+                "keep-alive",
+                "0"
+        );
         call.enqueue(new Callback<DownloadBillResponse>() {
             @Override
             public void onResponse(Call<DownloadBillResponse> call, Response<DownloadBillResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     String url = response.body().getUrl();
-                    // Open the URL in the browser
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(browserIntent);
+                    try {
+                        startActivity(browserIntent);
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(getContext(), "No app found to open the URL", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(getContext(), "Failed to download bill", Toast.LENGTH_SHORT).show();
                 }
@@ -155,7 +157,7 @@ public class TenantBillsFragment extends Fragment {
 
             @Override
             public void onFailure(Call<DownloadBillResponse> call, Throwable t) {
-                Toast.makeText(getContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Failed to connect to the server", Toast.LENGTH_SHORT).show();
             }
         });
     }

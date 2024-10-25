@@ -16,7 +16,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Device Management"
+            android:text="Pi Management"
             android:textSize="24sp"
             android:textStyle="bold"
             android:textColor="@android:color/black"
@@ -40,7 +40,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Device UID"
+                    android:text="Pi UID"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@android:color/black"
@@ -50,7 +50,7 @@
                     android:id="@+id/uidEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter Device UID"
+                    android:hint="Enter Pi UID"
                     android:textColor="@android:color/black"
                     android:backgroundTint="@android:color/darker_gray"
                     android:layout_marginBottom="16dp"

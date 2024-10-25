@@ -23,7 +23,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".activityforlandlord.DeviceManagementActivity"
+            android:name=".activityforlandlord.PiManagementActivity"
             android:windowSoftInputMode="adjustNothing"/>
         <activity
             android:name=".activityforlandlord.ManagePermissionsActivity"

@@ -1,7 +1,6 @@
 package com.example.splitmate_delta.activityforlandlord;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,7 +16,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DeviceManagementActivity extends AppCompatActivity {
+public class PiManagementActivity extends AppCompatActivity {
 
     private EditText uidEditText;
     private EditText houseIdEditText;
@@ -27,7 +26,7 @@ public class DeviceManagementActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_device_management);
+        setContentView(R.layout.activity_pi_management);
 
         uidEditText = findViewById(R.id.uidEditText);
         houseIdEditText = findViewById(R.id.houseIdEditText);
@@ -40,7 +39,7 @@ public class DeviceManagementActivity extends AppCompatActivity {
             String houseIdStr = houseIdEditText.getText().toString().trim();
 
             if (uid.isEmpty() || houseIdStr.isEmpty()) {
-                Toast.makeText(DeviceManagementActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PiManagementActivity.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -51,7 +50,7 @@ public class DeviceManagementActivity extends AppCompatActivity {
 
                 assignDeviceToHouse(request);
             } catch (NumberFormatException e) {
-                Toast.makeText(DeviceManagementActivity.this, "The house ID needs to be a number", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PiManagementActivity.this, "The house ID needs to be a number", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -64,18 +63,18 @@ public class DeviceManagementActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     // Request successful
-                    Toast.makeText(DeviceManagementActivity.this, "Device assigned successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PiManagementActivity.this, "Device assigned successfully", Toast.LENGTH_SHORT).show();
                 } else {
                     // Request failed, show status code
                     int statusCode = response.code();
-                    Toast.makeText(DeviceManagementActivity.this, "Failed to assign device: " + statusCode, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PiManagementActivity.this, "Failed to assign device: " + statusCode, Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 // Network error or other issues
-                Toast.makeText(DeviceManagementActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PiManagementActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

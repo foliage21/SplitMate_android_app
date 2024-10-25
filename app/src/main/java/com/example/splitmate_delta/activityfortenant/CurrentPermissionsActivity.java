@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.example.splitmate_delta.R;
 import com.example.splitmate_delta.api.ApiClient;
 import com.example.splitmate_delta.api.BackendApiService;
@@ -18,7 +19,6 @@ import com.example.splitmate_delta.models.permissions.Permission;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,26 +72,40 @@ public class CurrentPermissionsActivity extends AppCompatActivity {
         for (Permission permission : permissions) {
             // Dynamically create MaterialCardView
             MaterialCardView cardView = new MaterialCardView(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams cardLayoutParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
             );
-            layoutParams.setMargins(0, 0, 0, 16);
-            cardView.setLayoutParams(layoutParams);
+            cardLayoutParams.setMargins(0, 0, 0, 16);
+            cardView.setLayoutParams(cardLayoutParams);
             cardView.setCardElevation(8);
             cardView.setRadius(12);
 
-            // Dynamically create TextView
-            LinearLayout linearLayout = new LinearLayout(this);
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            linearLayout.setPadding(16, 16, 16, 16);
+            // Create main horizontal LinearLayout
+            LinearLayout mainLayout = new LinearLayout(this);
+            mainLayout.setOrientation(LinearLayout.HORIZONTAL);
+            mainLayout.setPadding(16, 16, 16, 16);
+            mainLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            ));
+
+            // Create vertical LinearLayout for texts
+            LinearLayout textLayout = new LinearLayout(this);
+            textLayout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(
+                    0,
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    1f  // Weight to fill remaining space
+            );
+            textLayout.setLayoutParams(textLayoutParams);
 
             // Device name
             TextView deviceNameTextView = new TextView(this);
             deviceNameTextView.setText("Device: " + permission.getDeviceName());
             deviceNameTextView.setTextSize(18);
             deviceNameTextView.setTextColor(Color.BLACK);
-            linearLayout.addView(deviceNameTextView);
+            textLayout.addView(deviceNameTextView);
 
             // Permission status
             TextView statusTextView = new TextView(this);
@@ -99,10 +113,32 @@ public class CurrentPermissionsActivity extends AppCompatActivity {
             statusTextView.setText(statusText);
             statusTextView.setTextSize(16);
             statusTextView.setTextColor(Color.GRAY);
-            linearLayout.addView(statusTextView);
+            textLayout.addView(statusTextView);
 
-            cardView.addView(linearLayout);
+            // Add textLayout to mainLayout
+            mainLayout.addView(textLayout);
 
+            // Create ImageView for checkmark icon
+            ImageView checkMarkImageView = new ImageView(this);
+            // Set the image resource
+            checkMarkImageView.setImageResource(R.drawable.check_circle_24px);
+            // Optionally, set the tint color to green
+            checkMarkImageView.setColorFilter(Color.GREEN);
+            // Set layout parameters for ImageView
+            LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+            );
+            imageLayoutParams.gravity = Gravity.CENTER_VERTICAL; // Center vertically
+            checkMarkImageView.setLayoutParams(imageLayoutParams);
+
+            // Add ImageView to mainLayout
+            mainLayout.addView(checkMarkImageView);
+
+            // Add mainLayout to cardView
+            cardView.addView(mainLayout);
+
+            // Add cardView to permissionsContainer
             permissionsContainer.addView(cardView);
         }
     }
