@@ -1,167 +1,180 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/constraintLayout"
+    android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/background2"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/waterBillCard"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        android:background="@drawable/background2"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Water Bill Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/waterBillCard"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
 
-            <TextView
-                android:id="@+id/waterBill"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Water Bill: $0.00"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/electricityBillCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        app:layout_constraintTop_toBottomOf="@id/waterBillCard"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+                <TextView
+                    android:id="@+id/waterBill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Water Bill: $0.00"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Electricity Bill Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/electricityBillCard"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/waterBillCard"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
 
-            <TextView
-                android:id="@+id/electricityBill"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Electricity Bill: $0.00"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/internetBillCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        app:layout_constraintTop_toBottomOf="@id/electricityBillCard"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+                <TextView
+                    android:id="@+id/electricityBill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Electricity Bill: $0.00"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Internet Bill Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/internetBillCard"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/electricityBillCard"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
 
-            <TextView
-                android:id="@+id/internetBill"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Internet Bill: $0.00"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/gasBillCard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        app:layout_constraintTop_toBottomOf="@id/internetBillCard"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+                <TextView
+                    android:id="@+id/internetBill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Internet Bill: $0.00"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Gas Bill Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/gasBillCard"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:layout_constraintTop_toBottomOf="@id/internetBillCard"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
 
-            <TextView
-                android:id="@+id/gasBill"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Gas Bill: $0.00"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-    <LinearLayout
-        android:id="@+id/totalDueContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="16dp">
+                <TextView
+                    android:id="@+id/gasBill"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gas Bill: $0.00"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/black"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/totalBill"
+        <!-- Total Due Container -->
+        <LinearLayout
+            android:id="@+id/totalDueContainer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total Bill: $0.00"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"/>
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="16dp">
 
-        <TextView
-            android:id="@+id/dueDate"
+            <TextView
+                android:id="@+id/totalBill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total Bill: $0.00"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/dueDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Due Date: "
+                android:textSize="18sp"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+
+        <!-- Download Bill Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/downloadBillButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Due Date: "
-            android:textSize="18sp"
-            android:textColor="@android:color/black" />
-    </LinearLayout>
-    <!-- Download Bill Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/downloadBillButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Download Bill"
-        app:cornerRadius="16dp"
-        android:backgroundTint="@color/black"
-        app:icon="@drawable/receipt_long_24px"
-        app:iconTint="@color/white"
-        android:textColor="@color/white"
-        android:elevation="4dp"
-        android:layout_margin="16dp"
-        app:layout_constraintTop_toBottomOf="@id/gasBillCard"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+            android:text="Download Bill"
+            app:cornerRadius="16dp"
+            android:backgroundTint="@color/black"
+            app:icon="@drawable/receipt_long_24px"
+            app:iconTint="@color/white"
+            android:textColor="@color/white"
+            android:elevation="4dp"
+            android:layout_margin="16dp"
+            app:layout_constraintTop_toBottomOf="@id/gasBillCard"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

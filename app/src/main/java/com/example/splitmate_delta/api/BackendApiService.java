@@ -74,7 +74,7 @@ public interface BackendApiService {
     Call<ResponseBody> approveOrRejectPermission(@Body ApproveOrRejectRequest request);
 
     @POST("/frontend/assignDeviceToHouse")
-    Call<Void> assignDeviceToHouse(@Body AssignDeviceRequest request);
+    Call<ResponseBody> assignDeviceToHouse(@Body AssignDeviceRequest request);;
 
     @POST("bill/generateBillPdf/{userId}")
     Call<DownloadBillResponse> generateBillPdf(

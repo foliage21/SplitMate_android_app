@@ -61,7 +61,7 @@
             app:cornerRadius="8dp"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_marginTop="32dp"
-            app:backgroundTint="@android:color/holo_orange_light" />
+            app:backgroundTint="@color/colorPrimary" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

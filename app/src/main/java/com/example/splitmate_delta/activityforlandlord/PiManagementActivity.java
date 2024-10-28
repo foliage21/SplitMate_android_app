@@ -12,6 +12,9 @@ import com.example.splitmate_delta.api.BackendApiService;
 import com.example.splitmate_delta.api.ApiClient;
 import com.example.splitmate_delta.models.pi.AssignDeviceRequest;
 
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,23 +60,29 @@ public class PiManagementActivity extends AppCompatActivity {
 
     // API
     private void assignDeviceToHouse(AssignDeviceRequest request) {
-        Call<Void> call = apiService.assignDeviceToHouse(request);
-        call.enqueue(new Callback<Void>() {
+        Call<ResponseBody> call = apiService.assignDeviceToHouse(request);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
-                    // Request successful
-                    Toast.makeText(PiManagementActivity.this, "Device assigned successfully", Toast.LENGTH_SHORT).show();
+                    try {
+                        String responseBody = response.body().string();
+                        Toast.makeText(PiManagementActivity.this, "Device assigned successfully: " + responseBody, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(PiManagementActivity.this, "Failed to read response", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    // Request failed, show status code
-                    int statusCode = response.code();
-                    Toast.makeText(PiManagementActivity.this, "Failed to assign device: " + statusCode, Toast.LENGTH_SHORT).show();
+                    try {
+                        String errorBody = response.errorBody() != null ? response.errorBody().string() : "Unknown error";
+                        Toast.makeText(PiManagementActivity.this, "Failed to assign device: " + errorBody, Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(PiManagementActivity.this, "Failed to read error response", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                // Network error or other issues
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Toast.makeText(PiManagementActivity.this, "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
