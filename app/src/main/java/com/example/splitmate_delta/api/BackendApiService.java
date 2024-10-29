@@ -9,6 +9,8 @@ import com.example.splitmate_delta.models.permissions.PendingRequest;
 import com.example.splitmate_delta.models.permissions.Permission;
 import com.example.splitmate_delta.models.permissions.PermissionRequest;
 import com.example.splitmate_delta.models.pi.AssignDeviceRequest;
+import com.example.splitmate_delta.models.pi.Device;
+import com.example.splitmate_delta.models.pi.UnregisterDeviceRequest;
 import com.example.splitmate_delta.models.signup.ConfirmSignupRequest;
 import com.example.splitmate_delta.models.signup.SignupRequest;
 import com.example.splitmate_delta.models.login.LoginRequest;
@@ -85,4 +87,11 @@ public interface BackendApiService {
             @Header("Connection") String connection,
             @Header("Content-Length") String contentLength
     );
+
+    @POST("/frontend/unregisterDevice")
+    Call<ResponseBody> unregisterDevice(@Body UnregisterDeviceRequest request);
+
+    @GET("/frontend/getDeviceList")
+    Call<List<Device>> getDeviceList();
+
     }

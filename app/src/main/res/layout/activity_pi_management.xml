@@ -1,103 +1,100 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/background2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@drawable/background2">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
 
-    <LinearLayout
+    <!-- Title -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pi Management"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginBottom="32dp" />
+
+    <!-- Card Layout for Buttons -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        android:layout_marginBottom="24dp"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pi Management"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="24dp" />
-
-        <com.google.android.material.card.MaterialCardView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="10dp"
-            app:strokeColor="@android:color/darker_gray"
-            app:strokeWidth="2dp">
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingVertical="16dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Assign Device Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/assignDeviceButton"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
+                android:text="Assign Device"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                app:backgroundTint="@color/black"
+                app:icon="@drawable/file_save_24px"
+                app:iconTint="@android:color/white"
+                app:cornerRadius="12dp"
+                android:layout_marginTop="8dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Pi UID"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="12dp" />
+            <!-- Unregister Device Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/unregisterDeviceButton"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Unassign Device"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                app:backgroundTint="@color/black"
+                app:icon="@drawable/file_save_off_24px"
+                app:iconTint="@android:color/white"
+                app:cornerRadius="12dp"
+                android:layout_marginTop="12dp" />
 
-                <EditText
-                    android:id="@+id/uidEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter Pi UID"
-                    android:textColor="@android:color/black"
-                    android:backgroundTint="@android:color/darker_gray"
-                    android:layout_marginBottom="16dp"
-                    android:padding="10dp"/>
+            <!-- View Device List Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/viewDeviceListButton"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="View Device List"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                app:backgroundTint="@color/black"
+                app:icon="@drawable/format_list_bulleted_24px"
+                app:iconTint="@android:color/white"
+                app:cornerRadius="12dp"
+                android:layout_marginTop="12dp" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="House ID"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/black"
-                    android:layout_marginBottom="12dp" />
+    <!-- Device List Title -->
+    <TextView
+        android:id="@+id/deviceListTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Device List"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
 
-                <EditText
-                    android:id="@+id/houseIdEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter House ID"
-                    android:textColor="@android:color/black"
-                    android:backgroundTint="@android:color/darker_gray"
-                    android:layout_marginBottom="16dp"
-                    android:padding="10dp"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/assignDeviceButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Assign"
-                    android:textSize="16sp"
-                    android:textColor="@android:color/white"
-                    app:backgroundTint="@color/black"
-                    app:cornerRadius="24dp"
-                    app:strokeColor="@android:color/white"
-                    app:strokeWidth="2dp"
-                    android:layout_gravity="end"
-                    android:layout_marginTop="16dp"
-                    android:paddingStart="24dp"
-                    android:paddingEnd="24dp"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <FrameLayout
-            android:id="@+id/fragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginTop="24dp" />
-
-    </LinearLayout>
-</ScrollView>
+    <!-- Device List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/deviceRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"/>
+</LinearLayout>

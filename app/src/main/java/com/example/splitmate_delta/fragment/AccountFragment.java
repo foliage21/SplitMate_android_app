@@ -47,7 +47,6 @@ public class AccountFragment extends Fragment {
         int userId = sharedPreferences.getInt("userId", -1);
 
         if (userId != -1) {
-
             BackendApiService apiService = ApiClient.getApiService();
             Call<User> call = apiService.getUserById(userId);
 
@@ -59,9 +58,9 @@ public class AccountFragment extends Fragment {
                         mTvUsername.setText(user.getName());
                         mTvEmail.setText(user.getEmail());
 
-                        // Load user avatars using Picasso
-                        if (user.getImage() != null) {
-                            Picasso.get().load(user.getImage()).into(mIvProfileImage);
+                        String imageUrl = user.getImage();
+                        if (imageUrl != null && !imageUrl.isEmpty()) {
+                            Picasso.get().load(imageUrl).into(mIvProfileImage);
                         } else {
                             mIvProfileImage.setImageResource(R.drawable.default_profile_image);
                         }
@@ -81,12 +80,13 @@ public class AccountFragment extends Fragment {
 
         // Set the logout button click event
         mBtnLogout.setOnClickListener(v -> {
-
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.clear();  // Clear SharedPreferences
             editor.apply();
 
-            getActivity().finish();
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
         });
 
         return view;
