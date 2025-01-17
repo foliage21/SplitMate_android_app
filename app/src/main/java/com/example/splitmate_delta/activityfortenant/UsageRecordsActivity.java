@@ -70,12 +70,9 @@ public class UsageRecordsActivity extends AppCompatActivity {
     }
 
     private void displayUsageRecords(List<UsageRecord> usageRecords) {
-        // Clear old views from the container
         usageRecordsContainer.removeAllViews();
 
-        // Iterate through each record returned by the API
         for (UsageRecord record : usageRecords) {
-            // Dynamically create a MaterialCardView
             MaterialCardView cardView = new MaterialCardView(this);
             cardView.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -85,7 +82,6 @@ public class UsageRecordsActivity extends AppCompatActivity {
             cardView.setRadius(12f);
             cardView.setUseCompatPadding(true);
 
-            // Create an inner LinearLayout
             LinearLayout layout = new LinearLayout(this);
             layout.setLayoutParams(new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -94,33 +90,35 @@ public class UsageRecordsActivity extends AppCompatActivity {
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setPadding(16, 16, 16, 16);
 
-            // Create TextView for device name
             TextView deviceName = new TextView(this);
             deviceName.setText("Device: " + record.getDeviceUid());
             deviceName.setTextSize(20);
             deviceName.setTypeface(null, Typeface.BOLD);
             layout.addView(deviceName);
 
-            // Create TextView for start time
             TextView startTime = new TextView(this);
             startTime.setText("Start Time: " + record.getStartTime());
             startTime.setTextSize(18);
             layout.addView(startTime);
 
-            // Create TextView for stop time
-            TextView stopTime = new TextView(this);
-            stopTime.setText("Stop Time: " + record.getEndTime());
-            stopTime.setTextSize(18);
-            layout.addView(stopTime);
+            if (record.getEndTime() != null && !record.getEndTime().isEmpty()) {
+                TextView stopTime = new TextView(this);
+                stopTime.setText("Stop Time: " + record.getEndTime());
+                stopTime.setTextSize(18);
+                layout.addView(stopTime);
 
-            // Create TextView for usage duration
-            TextView usageTime = new TextView(this);
-            usageTime.setText("Total Usage Time: " + calculateUsageTime(record.getStartTime(), record.getEndTime()));
-            usageTime.setTextSize(18);
-            layout.addView(usageTime);
+                TextView usageTime = new TextView(this);
+                usageTime.setText("Total Usage Time: " + calculateUsageTime(record.getStartTime(), record.getEndTime()));
+                usageTime.setTextSize(18);
+                layout.addView(usageTime);
+            } else {
+                TextView noEndTime = new TextView(this);
+                noEndTime.setText("End Time: N/A");
+                noEndTime.setTextSize(18);
+                layout.addView(noEndTime);
+            }
 
             cardView.addView(layout);
-
             usageRecordsContainer.addView(cardView);
         }
     }

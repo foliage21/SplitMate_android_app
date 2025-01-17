@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SplitMate_Delta"
+rootProject.name = "Android_bill_APP"
 include ':app'

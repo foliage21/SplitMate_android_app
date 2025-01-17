@@ -186,10 +186,6 @@ public class TenantUsageRecordsActivity extends AppCompatActivity {
             cardView.setCardElevation(8f);
             cardView.setRadius(12f);
             cardView.setUseCompatPadding(true);
-            cardView.setLayoutParams(new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            ));
             ((LinearLayout.LayoutParams) cardView.getLayoutParams()).setMargins(0, 0, 0, 16);
 
             LinearLayout layout = new LinearLayout(this);
@@ -211,18 +207,24 @@ public class TenantUsageRecordsActivity extends AppCompatActivity {
             startTime.setTextSize(18);
             layout.addView(startTime);
 
-            TextView stopTime = new TextView(this);
-            stopTime.setText("Stop Time: " + record.getEndTime());
-            stopTime.setTextSize(18);
-            layout.addView(stopTime);
+            if (record.getEndTime() != null && !record.getEndTime().isEmpty()) {
+                TextView stopTime = new TextView(this);
+                stopTime.setText("Stop Time: " + record.getEndTime());
+                stopTime.setTextSize(18);
+                layout.addView(stopTime);
 
-            TextView usageTime = new TextView(this);
-            usageTime.setText("Total Usage Time: " + calculateUsageTime(record.getStartTime(), record.getEndTime()));
-            usageTime.setTextSize(18);
-            layout.addView(usageTime);
+                TextView usageTime = new TextView(this);
+                usageTime.setText("Total Usage Time: " + calculateUsageTime(record.getStartTime(), record.getEndTime()));
+                usageTime.setTextSize(18);
+                layout.addView(usageTime);
+            } else {
+                TextView noEndTime = new TextView(this);
+                noEndTime.setText("End Time: N/A");
+                noEndTime.setTextSize(18);
+                layout.addView(noEndTime);
+            }
 
             cardView.addView(layout);
-
             usageRecordsContainer.addView(cardView);
         }
     }
